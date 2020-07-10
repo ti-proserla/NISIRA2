@@ -1,0 +1,160 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Model\NPrivilegiosAprobar;
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class AprobacionController extends Controller
+{
+    public function edt(Request $request){
+        $aprobar=NPrivilegiosAprobar::select(DB::raw('RTRIM(IDUSUARIO) IDUSUARIO,RTRIM(PRIVILEGIOS_APROBAR.FORMULARIO) FORMULARIO,SUBSTRING(TABLA, 4, LEN ( TABLA )-1) TABLA,KEYASOCIADO PRIMARYKEY,FORMULARIOS.DESCRIPCION'))
+                ->join('FORMULARIOS','FORMULARIOS.FORMULARIO','=','PRIVILEGIOS_APROBAR.FORMULARIO')
+                ->where('APRUEBA','1')
+                ->where('IDUSUARIO',$request->usuario)
+                ->get();
+        return response()->json($aprobar);
+    }
+
+    public function pendientes(Request $request){
+        $tabla=$request->tabla;
+        
+        $existe_clienpro=DB::connection('sqlsrv')
+                            ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
+                                $tabla,'IDCLIEPROV'
+                            ]);
+        $existe_idresponsable=DB::connection('sqlsrv')
+                            ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
+                                $tabla,'IDRESPONSABLE'
+                            ]);
+        $estado=DB::connection('sqlsrv')
+                            ->select(DB::raw("SELECT TOP 1 idestado 
+                            from SECUENCIA_FLUJO 
+                                INNER JOIN FORMULARIOS ON FORMULARIOS.FORMULARIO=SECUENCIA_FLUJO.FORMULARIO_ORIGEN
+                            where SUBSTRING(TABLA, 4, LEN ( TABLA )-1) = ?  
+                                    AND FORMULARIO_ORIGEN = FORMULARIO_DESTINO 
+                                    AND IDESTADO <> 'AP'
+                            order by SECUENCIA desc"),[$tabla]);
+
+        
+        if ($existe_clienpro[0]->cantidad) {
+            $pendientes=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
+                                                FROM $tabla  AS T 
+                                                left JOIN CLIEPROV AS C ON T.idclieprov = C.IDCLIEPROV
+                                                WHERE T.idestado = ?"),[$estado[0]->idestado]);
+        }elseif ($existe_idresponsable[0]->cantidad) {
+            $pendientes=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT T.*, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
+                                                FROM $tabla  AS T 
+                                                left JOIN RESPONSABLE AS C ON T.idresponsable = c.IDRESPONSABLE
+                                                WHERE T.idestado = ?"),[$estado[0]->idestado]);
+        }else{
+            $pendientes=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT T.*, 'No Asignado' AS destinatariodoc 
+                                                FROM $tabla  AS T 
+                                                WHERE T.idestado = ?"),[$estado[0]->idestado]);
+        }
+        return response()->json($pendientes);
+    }
+    public function detalles(Request $request){
+        $tabla=$request->tabla;
+        $primarykey=$request->primarykey;
+        $id=$request->id;
+
+
+        $existe_clienpro=DB::connection('sqlsrv')
+                            ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
+                                $tabla,'IDCLIEPROV'
+                            ]);
+        $existe_idresponsable=DB::connection('sqlsrv')
+                            ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
+                                $tabla,'IDRESPONSABLE'
+                            ]);
+        
+        if ($existe_clienpro[0]->cantidad) {
+            $pendientes=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
+                                                FROM $tabla  AS T 
+                                                left JOIN CLIEPROV AS C ON T.idclieprov = C.IDCLIEPROV
+                                                WHERE T.$primarykey = '$id'"));
+        }elseif ($existe_idresponsable[0]->cantidad) {
+            $pendientes=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT T.*, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
+                                                FROM $tabla  AS T 
+                                                left JOIN RESPONSABLE AS C ON T.idresponsable = c.IDRESPONSABLE
+                                                WHERE T.$primarykey = '$id'"));
+        }else{
+            $pendientes=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT T.*, 'No Asignado' AS destinatariodoc 
+                                                FROM $tabla  AS T 
+                                                WHERE T.$primarykey = '$id'"));
+        }
+        // $pendientes
+        $detalles=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT  *  FROM d$tabla WHERE  $primarykey = '$id'"));
+        return response()->json([
+            "documento" => $pendientes[0],
+            "detalles"  =>  $detalles
+        ]);
+    }
+
+    public function aprobar(Request $request){
+        $tabla=$request->tabla;
+        $primarykey=$request->primarykey;
+        $id=$request->id;
+        $usuario=$request->usuario;
+        $formulario=$request->formulario;
+        $operacion=DB::connection('sqlsrv')
+                            ->table($tabla)
+                            ->where($primarykey,$id)
+                            ->update([
+                                "idestado"=>"AP",
+                                "nrsidusuario_ap"=>$usuario,
+                                "nsrfecha_ap"=>Carbon::now(),
+                            ]);
+                            // ->select(DB::raw("UPDATE $tabla set idestado = 'AP' where  $primarykey= '$id'"),[]);
+        $operacion2=DB::connection('sqlsrv')
+                            ->table('LOGESTADOS')
+                            ->insert([
+                                "idempresa" =>"001",
+                                "idcodigo"  =>$id,
+                                "idusuario" =>$usuario,
+                                "archivo"   =>$tabla,
+                                "formulario"=>$formulario,
+                                "idestado"  =>"AP",
+                                "fecha"     => Carbon::now(),
+                                "fechacreacion"=> Carbon::now(),
+                                "sincroniza"=> "N",
+                                "de"=> null,
+                                "maquina"=> "MOVIL\\$usuario",
+                            ]);        
+        return response()->json([
+            "status"    =>  "OK",
+            "data"      =>  $operacion,
+            "data2"      =>  $operacion2
+        ]);
+    }
+
+    public function login(Request $request){
+        $usuario=$request->usuario;
+        $password=$request->password;
+        // dd($request->all());
+        $logeo=DB::connection('sqlsrv')
+                ->select(DB::raw("select IDUSUARIO from USUARIO where IDUSUARIO=? AND PASSWORD=?"),[$usuario,$password]);
+        if (count($logeo)>0) {
+            return response()->json([
+                "status"    =>  "OK",
+                "data"      =>  $logeo[0]
+            ]);
+        }else{
+            return response()->json([
+                "status"    =>  "NO",
+                "data"      =>  "Usuario o contraseña incorrectos."
+            ]);
+        }
+    }
+}
