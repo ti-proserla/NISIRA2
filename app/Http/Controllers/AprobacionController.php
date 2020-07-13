@@ -61,10 +61,10 @@ class AprobacionController extends Controller
         return response()->json($pendientes);
     }
     public function detalles(Request $request){
+        
         $tabla=$request->tabla;
         $primarykey=$request->primarykey;
         $id=$request->id;
-
 
         $existe_clienpro=DB::connection('sqlsrv')
                             ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
@@ -74,31 +74,33 @@ class AprobacionController extends Controller
                             ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
                                 $tabla,'IDRESPONSABLE'
                             ]);
-        
+                
         if ($existe_clienpro[0]->cantidad) {
             $pendientes=DB::connection('sqlsrv')
-                            ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
-                                                FROM $tabla  AS T 
-                                                left JOIN CLIEPROV AS C ON T.idclieprov = C.IDCLIEPROV
-                                                WHERE T.$primarykey = '$id'"));
+            ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
+                                        FROM $tabla  AS T 
+                                        left JOIN CLIEPROV AS C ON T.idclieprov = C.IDCLIEPROV
+                                        WHERE T.$primarykey = '$id'"));
         }elseif ($existe_idresponsable[0]->cantidad) {
             $pendientes=DB::connection('sqlsrv')
-                            ->select(DB::raw("  SELECT T.*, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
+            ->select(DB::raw("  SELECT T.*, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
                                                 FROM $tabla  AS T 
                                                 left JOIN RESPONSABLE AS C ON T.idresponsable = c.IDRESPONSABLE
                                                 WHERE T.$primarykey = '$id'"));
         }else{
             $pendientes=DB::connection('sqlsrv')
-                            ->select(DB::raw("  SELECT T.*, 'No Asignado' AS destinatariodoc 
+            ->select(DB::raw("  SELECT T.*, 'No Asignado' AS destinatariodoc 
                                                 FROM $tabla  AS T 
                                                 WHERE T.$primarykey = '$id'"));
         }
         // $pendientes
         $detalles=DB::connection('sqlsrv')
-                            ->select(DB::raw("  SELECT  *  FROM d$tabla WHERE  $primarykey = '$id'"));
+                    ->select(DB::raw("  SELECT  *  FROM d$tabla WHERE  $primarykey = '$id'"));
+        // $detalles=collect($detalles)->map(function($x){ return array_change_key_case((array)$x,CASE_LOWER); })->toArray();
+        // dd(array_change_key_case($detalles,CASE_LOWER));
         return response()->json([
-            "documento" => $pendientes[0],
-            "detalles"  => array_change_key_case($detalles,CASE_LOWER)
+            "documento" => array_change_key_case((array)$pendientes[0],CASE_LOWER),
+            "detalles"  => $this->keyMin($detalles)
         ]);
     }
 
@@ -156,5 +158,9 @@ class AprobacionController extends Controller
                 "data"      =>  "Usuario o contraseña incorrectos."
             ]);
         }
+    }
+
+    public function keyMin($array){
+        return collect($array)->map(function($x){ return array_change_key_case((array)$x,CASE_LOWER); })->toArray();
     }
 }
