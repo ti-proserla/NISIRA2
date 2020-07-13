@@ -98,7 +98,7 @@ class AprobacionController extends Controller
                             ->select(DB::raw("  SELECT  *  FROM d$tabla WHERE  $primarykey = '$id'"));
         return response()->json([
             "documento" => $pendientes[0],
-            "detalles"  =>  $detalles
+            "detalles"  => array_change_key_case($detalles,CASE_LOWER)
         ]);
     }
 
