@@ -163,7 +163,7 @@ class AprobacionController extends Controller
         // dd($request->all());
         $usuario=$request->usuario;
         $idproducto=$request->idproducto;
-        dd($request->all());
+        dd($idproducto);
         $data=DB::connection('sqlsrv')
                 ->select("SET NOCOUNT ON exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
                                 <VFPData>
