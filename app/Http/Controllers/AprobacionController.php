@@ -170,9 +170,9 @@ class AprobacionController extends Controller
                 <idproducto>$idproducto</idproducto>
             </productos_buscar>
         </VFPData>',?";
-        dd($query);
+        // dd($query);
         $data=DB::connection('sqlsrv')
-                ->select(DB::raw($query),[
+                ->select($query,[
                     $usuario
                 ]);
 
