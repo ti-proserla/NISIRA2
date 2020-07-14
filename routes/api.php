@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('edt','AprobacionController@edt');
 Route::get('edt/pendiente','AprobacionController@pendientes');
+Route::get('edt/stock','AprobacionController@stock');
 Route::get('edt/detalle','AprobacionController@detalles');
 Route::post('edt/aprobar','AprobacionController@aprobar');
 Route::post('edt/login','AprobacionController@login');
