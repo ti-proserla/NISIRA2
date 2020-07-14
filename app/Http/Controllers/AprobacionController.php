@@ -170,12 +170,11 @@ class AprobacionController extends Controller
                 <idproducto>$idproducto</idproducto>
             </productos_buscar>
         </VFPData>',?";
+        $query2ejm="SET NOCOUNT ON exec getrecord_Returndocumento '001','EAR'";
         // dd($query);
         $data=DB::connection('sqlsrv')
-                ->select($query,[
-                    $usuario
-                ]);
-
+                ->select($query2ejm,[]);
+        dd($data);
         return response()->json($this->keyMin($data));
     }
     public function keyMin($array){
