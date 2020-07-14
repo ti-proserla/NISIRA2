@@ -174,6 +174,7 @@ class AprobacionController extends Controller
         // dd($query);
         $data=DB::connection('sqlsrv')
                 ->select('SET NOCOUNT ON; EXEC getrecord_Returndocumento '.DB::raw("'001','EAR'"),[]);
+        dd("hola");
         dd($data);
         return response()->json($this->keyMin($data));
     }
