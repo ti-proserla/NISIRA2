@@ -170,7 +170,7 @@ class AprobacionController extends Controller
                 <idproducto>$idproducto</idproducto>
             </productos_buscar>
         </VFPData>',?";
-        $query2ejm="SET NOCOUNT ON exec getrecord_Returndocumento '001','EAR'";
+        $query2ejm="SET NOCOUNT ON; exec getrecord_Returndocumento '001','EAR'";
         // dd($query);
         $data=DB::connection('sqlsrv')
                 ->select($query2ejm,[]);
