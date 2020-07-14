@@ -164,15 +164,18 @@ class AprobacionController extends Controller
         $usuario=$request->usuario;
         $idproducto=$request->idproducto;
         // dd($idproducto);
+        $query="SET NOCOUNT ON exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
+        <VFPData>
+            <productos_buscar>
+                <idproducto>$idproducto</idproducto>
+            </productos_buscar>
+        </VFPData>',?";
+        dd($query);
         $data=DB::connection('sqlsrv')
-                ->select(DB::raw("SET NOCOUNT ON exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
-                                <VFPData>
-                                    <productos_buscar>
-                                        <idproducto>$idproducto</idproducto>
-                                    </productos_buscar>
-                                </VFPData>',?"),[
+                ->select(DB::raw($query),[
                     $usuario
                 ]);
+
         return response()->json($this->keyMin($data));
     }
     public function keyMin($array){
