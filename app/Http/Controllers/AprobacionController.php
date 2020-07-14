@@ -185,6 +185,17 @@ class AprobacionController extends Controller
             </VFPData>',?";
             // $query2ejm=;
             // dd($query);
+            // dd();
+            try {
+                $base_de_datos = DB::connection('sqlsrv')->getPdo();
+                $base_de_datos->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+                $res = $base_de_datos->query("SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] '001'", \PDO::FETCH_ASSOC);
+                
+                $res->execute();
+                dd($res->fetch());
+            } catch (Exception $e) {
+                echo "Ocurrió un error con la base de datos: " . $e->getMessage();
+            }
             $data=DB::select('SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] ?',['001']);
             // dd("hola");
             // dd($data);
