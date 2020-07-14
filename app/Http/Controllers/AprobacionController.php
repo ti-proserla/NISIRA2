@@ -188,6 +188,7 @@ class AprobacionController extends Controller
             // dd();
             try {
                 $base_de_datos = DB::connection('sqlsrv')->getPdo();
+                dd($base_de_datos);
                 $base_de_datos->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 $res = $base_de_datos->query("SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] '001'", \PDO::FETCH_ASSOC);
                 
