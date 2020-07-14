@@ -160,23 +160,28 @@ class AprobacionController extends Controller
         }
     }
     public function stock(Request $request){
+        try {
+            //code...
+            $usuario=$request->usuario;
+            $idproducto=$request->idproducto;
+            // dd($idproducto);
+            $query="SET NOCOUNT ON exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
+            <VFPData>
+                <productos_buscar>
+                    <idproducto>$idproducto</idproducto>
+                </productos_buscar>
+            </VFPData>',?";
+            // $query2ejm=;
+            // dd($query);
+            $data=DB::connection('sqlsrv')
+                    ->select('SET NOCOUNT ON; EXEC getrecord_Returndocumento ?,?',['001','EAR']);
+            // dd("hola");
+            // dd($data);
+            return response()->json($this->keyMin($data));
+        } catch (\Exception $th) {
+            dd($th->getMessage());
+        }
         // dd($request->all());
-        $usuario=$request->usuario;
-        $idproducto=$request->idproducto;
-        // dd($idproducto);
-        $query="SET NOCOUNT ON exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
-        <VFPData>
-            <productos_buscar>
-                <idproducto>$idproducto</idproducto>
-            </productos_buscar>
-        </VFPData>',?";
-        // $query2ejm=;
-        // dd($query);
-        $data=DB::connection('sqlsrv')
-                ->select('SET NOCOUNT ON; EXEC getrecord_Returndocumento '.DB::raw("'001','EAR'"),[]);
-        dd("hola");
-        dd($data);
-        return response()->json($this->keyMin($data));
     }
     public function keyMin($array){
         return collect($array)->map(function($x){ return array_change_key_case((array)$x,CASE_LOWER); })->toArray();
