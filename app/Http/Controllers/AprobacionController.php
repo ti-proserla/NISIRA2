@@ -197,7 +197,7 @@ class AprobacionController extends Controller
                         </VFPData>','ADMINISTRADOR'
                 SELECT * FROM @table_into
             END;";
-            $data=DB::select($query,['001']);
+            $data=DB::select($query);
             // dd("hola");
             // dd($data);
             return response()->json($this->keyMin($data));
