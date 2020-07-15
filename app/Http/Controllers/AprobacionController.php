@@ -191,7 +191,7 @@ class AprobacionController extends Controller
                 // dd($base_de_datos);
                 $base_de_datos->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 $res = $base_de_datos->query("SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] '001'", \PDO::FETCH_ASSOC);
-                $res->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, 'ClassName');
+                $res->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, 'ClassName');
                 $res->execute();
                 dd($res->fetch());
             } catch (\PDOException  $e) {
