@@ -200,6 +200,7 @@ class AprobacionController extends Controller
                 if ( ! $res->execute()) {
                     throw new \ErrorException('Error executing sp_MyStoredProcedure');
                 }
+                dd($base_de_datos->errorInfo());
                 dd($res->fetch());
             } catch (\PDOException  $e) {
                 echo "Ocurrió un error con la base de datos: " . $e->errorInfo();
