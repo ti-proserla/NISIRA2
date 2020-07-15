@@ -189,16 +189,24 @@ class AprobacionController extends Controller
             try {
                 $base_de_datos = DB::connection('sqlsrv')->getPdo();
                 // dd($base_de_datos);
+                $base_de_datos->setAttribute(\PDO::ATTR_CASE , \PDO::CASE_NATURAL);
                 $base_de_datos->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+                $base_de_datos->setAttribute(\PDO::ATTR_ORACLE_NULLS , \PDO::NULL_NATURAL);
+                $base_de_datos->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES , false);
                 $res = $base_de_datos->query("SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] '001'", \PDO::FETCH_ASSOC);
                 // $res = $base_de_datos->query("select * FROM usuario", \PDO::FETCH_ASSOC);
                 $res->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, 'ClassName');
                 $res->execute();
+                if ( ! $statement->execute()) {
+                    throw new \ErrorException('Error executing sp_MyStoredProcedure');
+                }
                 dd($res->fetch());
             } catch (\PDOException  $e) {
-                echo "Ocurrió un error con la base de datos: " . $e->getMessage();
+                echo "Ocurrió un error con la base de datos: " . $e->errorInfo();
+            }catch (\ErrorException $e){
+                echo "Ocurrió un error despues base de datos: " . $e->getMessage();
             }
-            $data=DB::select('SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] ?',['001']);
+                $data=DB::select('SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] ?',['001']);
             // dd("hola");
             // dd($data);
             return response()->json($this->keyMin($data));
