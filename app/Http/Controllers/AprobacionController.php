@@ -188,7 +188,7 @@ class AprobacionController extends Controller
                 idproducto_ref varchar(15)
             )
             BEGIN
-                SET NOCOUNT ON;
+                
                 INSERT @table_into exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
                         <VFPData>
                             <productos_buscar>
