@@ -163,8 +163,7 @@ class AprobacionController extends Controller
         $usuario=$request->usuario;
         $idproducto=$request->idproducto;
         try {
-            $query="SET NOCOUNT ON;
-            DECLARE @table_into  TABLE(
+            $query="DECLARE @table_into  TABLE(
                 idsucursal varchar(3),
                 sucursal varchar(20),
                 idalmacen varchar(3),
