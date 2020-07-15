@@ -183,6 +183,40 @@ class AprobacionController extends Controller
                     <idproducto>$idproducto</idproducto>
                 </productos_buscar>
             </VFPData>',?";
+            $query="SET NOCOUNT ON;
+            DECLARE @table_into  TABLE(
+                idsucursal varchar(3),
+                sucursal varchar(20),
+                idalmacen varchar(3),
+                almacen varchar(20),
+                idproducto varchar(20),
+                producto varchar(200),
+                idmedida varchar(5),
+                idmedida2 varchar(5),
+                idlotep varchar(5),
+                idserie varchar(5),
+                idubicacion varchar(5),
+                idestadoproducto integer,
+                estado varchar(10),
+                pidelote integer,
+                pideserie integer,
+                es_aprovechable integer,
+                peso numeric(17,4),
+                peso_tara numeric(17,2),
+                exige_u2 numeric(17,2),
+                stock numeric(17,2),
+                stock2 numeric(17,2),
+                idproducto_ref varchar(15)
+            )
+            BEGIN
+                INSERT @table_into exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
+                        <VFPData>
+                            <productos_buscar>
+                                <idproducto>$idproducto</idproducto>
+                            </productos_buscar>
+                        </VFPData>','ADMINISTRADOR'
+                SELECT * FROM @table_into
+            END;";
             // $query2ejm=;
             // dd($query);
             // dd();
@@ -193,14 +227,14 @@ class AprobacionController extends Controller
                 $base_de_datos->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 $base_de_datos->setAttribute(\PDO::ATTR_ORACLE_NULLS , \PDO::NULL_NATURAL);
                 $base_de_datos->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES , false);
-                $res = $base_de_datos->query("SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] '001'", \PDO::FETCH_ASSOC);
+                $res = $base_de_datos->query($query, \PDO::FETCH_ASSOC);
                 // $res = $base_de_datos->query("select * FROM usuario", \PDO::FETCH_ASSOC);
                 $res->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, 'ClassName');
                 // $res->execute();
                 if ( ! $res->execute()) {
                     throw new \ErrorException('Error executing sp_MyStoredProcedure');
                 }
-                dd($base_de_datos->errorInfo());
+                // dd($base_de_datos->errorInfo());
                 dd($res->fetch());
             } catch (\PDOException  $e) {
                 echo "Ocurrió un error con la base de datos: " . $e->errorInfo();
