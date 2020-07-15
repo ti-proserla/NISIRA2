@@ -171,7 +171,7 @@ class AprobacionController extends Controller
                 idproducto varchar(20),
                 producto varchar(200),
                 idmedida varchar(5),
-                idmedida2 varchar(5),
+                idmedida2 varchar(5) NULL,
                 idlotep varchar(5),
                 idserie varchar(5),
                 idubicacion varchar(5),
