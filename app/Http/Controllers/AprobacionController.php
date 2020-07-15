@@ -197,6 +197,16 @@ class AprobacionController extends Controller
                         </VFPData>','ADMINISTRADOR'
                 SELECT * FROM @table_into
             END;";
+            $query="DECLARE @table_into  TABLE(
+                    clave varchar(20),
+                    posicion varchar(20),
+                    descripcion varchar(200),
+                    ventana varchar(200)
+                )
+                BEGIN
+                    INSERT @table_into exec objreturn_menussistema 
+                    SELECT * FROM @table_into
+                END;";
             $data=DB::select($query);
             // dd("hola");
             // dd($data);
