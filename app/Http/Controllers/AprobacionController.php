@@ -136,9 +136,7 @@ class AprobacionController extends Controller
                             ]);        
         return response()->json([
             "status"    =>  "OK",
-            "data"      =>  $operacion,
-            "data2"      =>  $operacion2
-        ]);
+        ],200);
     }
 
     public function login(Request $request){
