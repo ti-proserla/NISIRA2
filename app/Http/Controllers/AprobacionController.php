@@ -196,8 +196,8 @@ class AprobacionController extends Controller
                 $res = $base_de_datos->query("SET NOCOUNT ON; EXEC [dbo].[gettables_returntipoventa] '001'", \PDO::FETCH_ASSOC);
                 // $res = $base_de_datos->query("select * FROM usuario", \PDO::FETCH_ASSOC);
                 $res->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, 'ClassName');
-                $res->execute();
-                if ( ! $statement->execute()) {
+                // $res->execute();
+                if ( ! $res->execute()) {
                     throw new \ErrorException('Error executing sp_MyStoredProcedure');
                 }
                 dd($res->fetch());
