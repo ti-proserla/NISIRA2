@@ -163,53 +163,12 @@ class AprobacionController extends Controller
         $usuario=$request->usuario;
         $idproducto=$request->idproducto;
         try {
-            $query="DECLARE @table_into  TABLE(
-                idsucursal varchar(3),
-                sucursal varchar(20),
-                idalmacen varchar(3),
-                almacen varchar(20),
-                idproducto varchar(20),
-                producto varchar(200),
-                idmedida varchar(5),
-                idmedida2 varchar(5) NULL,
-                idlotep varchar(5),
-                idserie varchar(5),
-                idubicacion varchar(5),
-                idestadoproducto integer,
-                estado varchar(10),
-                pidelote integer,
-                pideserie integer,
-                es_aprovechable integer,
-                peso numeric(17,4),
-                peso_tara numeric(17,2),
-                exige_u2 numeric(17,2),
-                stock numeric(17,2),
-                stock2 numeric(17,2),
-                idproducto_ref varchar(15)
-            )
-            BEGIN
-                
-                INSERT @table_into exec NSP_RETURN_SALDOS_PRODUCTOS '001','002','005','20200713','','<?xml version=\"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?>
-                        <VFPData>
-                            <productos_buscar>
-                                <idproducto>$idproducto</idproducto>
-                            </productos_buscar>
-                        </VFPData>','ADMINISTRADOR'
-                SELECT * FROM @table_into
-            END;";
-            $query="DECLARE @table_into  TABLE(
-                    clave varchar(20),
-                    posicion varchar(20),
-                    descripcion varchar(200),
-                    ventana varchar(200)
-                )
-                BEGIN
-                    INSERT @table_into exec objreturn_menussistema 
-                    SELECT * FROM @table_into
-                END;";
-            $data=DB::select($query);
-            // dd("hola");
-            // dd($data);
+            $query="select idproducto, SUM(CANTIDAD*FACTOR) STOCK, M.IDSUCURSAL , M.IDALMACEN, A.DESCRIPCION ALMACEN
+            FROM MOVALMACEN M
+            INNER JOIN ALMACENES A ON A.IDALMACEN=M.IDALMACEN 
+            where IDPRODUCTO = ?
+            GROUP BY M.IDPRODUCTO,M.IDSUCURSAL , M.IDALMACEN,A.DESCRIPCION";
+            $data=DB::select($query,[$idproducto]);
             return response()->json($this->keyMin($data));
         } catch (\Exception $th) {
             dd($th->getMessage());
