@@ -105,9 +105,9 @@ class AprobacionController extends Controller
     }
 
     public function aprobar(Request $request){
-        return response()->json([
-            "status"    =>  "OK",
-        ]);
+        // return response()->json([
+        //     "status"    =>  "OK",
+        // ]);
         $tabla=$request->tabla;
         $primarykey=$request->primarykey;
         $id=$request->id;
