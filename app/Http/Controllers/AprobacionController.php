@@ -58,7 +58,7 @@ class AprobacionController extends Controller
                                                 FROM $tabla  AS T 
                                                 WHERE T.idestado = ?"),[$estado[0]->idestado]);
         }
-        return response()->json($pendientes,200);
+        return response()->json($this->keyMin($pendientes),200);
     }
     public function detalles(Request $request){
         
