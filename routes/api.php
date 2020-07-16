@@ -17,19 +17,19 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-// Route::group(['middleware' => ['cors']], function () {
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    header('Access-Control-Allow-Methods: GET, POST, DELETE');
-    header('Access-Control-Allow-Headers: Authorization');
-    http_response_code(204);
-}
-header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Headers: *");
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-Route::get('edt','AprobacionController@edt');
-Route::get('edt/pendiente','AprobacionController@pendientes');
-Route::get('edt/stock','AprobacionController@stock');
-Route::get('edt/detalle','AprobacionController@detalles');
-Route::post('edt/aprobar','AprobacionController@aprobar');
-Route::post('edt/login','AprobacionController@login');
-// });
+Route::group(['middleware' => ['cors']], function () {
+    // if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    //     header('Access-Control-Allow-Methods: GET, POST, DELETE');
+    //     header('Access-Control-Allow-Headers: Authorization');
+    //     http_response_code(204);
+    // }
+// header('Access-Control-Allow-Origin: *');
+// header("Access-Control-Allow-Headers: *");
+// header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+    Route::get('edt','AprobacionController@edt');
+    Route::get('edt/pendiente','AprobacionController@pendientes');
+    Route::get('edt/stock','AprobacionController@stock');
+    Route::get('edt/detalle','AprobacionController@detalles');
+    Route::post('edt/aprobar','AprobacionController@aprobar');
+    Route::post('edt/login','AprobacionController@login');
+});
