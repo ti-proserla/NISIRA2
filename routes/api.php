@@ -17,10 +17,11 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
-Route::get('edt','AprobacionController@edt');
-Route::get('edt/pendiente','AprobacionController@pendientes');
-Route::get('edt/stock','AprobacionController@stock');
-Route::get('edt/detalle','AprobacionController@detalles');
-Route::post('edt/aprobar','AprobacionController@aprobar');
-Route::post('edt/login','AprobacionController@login');
+Route::group(['middleware' => ['cors']], function () {
+    Route::get('edt','AprobacionController@edt');
+    Route::get('edt/pendiente','AprobacionController@pendientes');
+    Route::get('edt/stock','AprobacionController@stock');
+    Route::get('edt/detalle','AprobacionController@detalles');
+    Route::post('edt/aprobar','AprobacionController@aprobar');
+    Route::post('edt/login','AprobacionController@login');
+});
