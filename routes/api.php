@@ -18,8 +18,13 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 // Route::group(['middleware' => ['cors']], function () {
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header('Access-Control-Allow-Methods: GET, POST, DELETE');
+    header('Access-Control-Allow-Headers: Authorization');
+    http_response_code(204);
+}
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header("Access-Control-Allow-Headers: *");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 Route::get('edt','AprobacionController@edt');
 Route::get('edt/pendiente','AprobacionController@pendientes');
