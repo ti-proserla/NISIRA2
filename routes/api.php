@@ -18,8 +18,9 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 // Route::group(['middleware' => ['cors']], function () {
-header("Access-Control-Allow-Headers: *");
-header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 Route::get('edt','AprobacionController@edt');
 Route::get('edt/pendiente','AprobacionController@pendientes');
 Route::get('edt/stock','AprobacionController@stock');
