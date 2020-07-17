@@ -38,9 +38,8 @@ class AprobacionController extends Controller
                                     AND FORMULARIO_ORIGEN = FORMULARIO_DESTINO 
                                     AND IDESTADO <> 'AP'
                             order by SECUENCIA desc"),[$tabla]);
-
         
-        if ($existe_clienpro[0]->cantidad) {
+        if ($existe_clienpro[0]->cantidad&&$tabla!="REQINTERNO") {
             $pendientes=DB::connection('sqlsrv')
                             ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
                                                 FROM $tabla  AS T 
