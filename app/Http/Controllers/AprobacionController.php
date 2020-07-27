@@ -168,10 +168,10 @@ class AprobacionController extends Controller
             INNER JOIN ALMACENES A ON A.IDALMACEN=M.IDALMACEN 
             where IDPRODUCTO = ?
             GROUP BY M.IDPRODUCTO,M.IDSUCURSAL , M.IDALMACEN,A.DESCRIPCION";
-            $data=DB::select($query,[$idproducto]);
+            $data=DB::connection('sqlsrv')
+                    ->select($query,[$idproducto]);
             return response()->json($this->keyMin($data));
         } catch (\Exception $th) {
-            dd($th->getMessage());
         }
         // dd($request->all());
     }

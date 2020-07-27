@@ -33,3 +33,5 @@ Route::group(['middleware' => ['cors']], function () {
     Route::post('edt/aprobar','AprobacionController@aprobar');
     Route::post('edt/login','AprobacionController@login');
 });
+
+Route::get('licencias', 'LicenciasController@index');

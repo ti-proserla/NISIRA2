@@ -91,6 +91,19 @@ return [
             'prefix_indexes' => true,
             'strict' => false,
         ],
+        'sqlsrv_proserla' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => '172.16.1.113',
+            'port' => '1433',
+            'database' => 'PROSERLA',
+            'username' => 'sa',
+            'password' => 'admin2019.rar',
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+        ],
 
     ],
 
