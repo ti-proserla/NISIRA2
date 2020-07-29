@@ -17,6 +17,7 @@ class CreateEventoTable extends Migration
             $table->id();
             $table->string('descripcion',120);
             $table->string('user_nisira',20)->nullable();
+            $table->string('tipo',20)->nullable();
             $table->timestamps();
         });
     }
