@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
-// use App\Model\NPrimaryKey;
+use App\Model\Evento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
+use Mail;
 
 class CommandDobleNisira extends Command
 {
@@ -53,8 +54,28 @@ class CommandDobleNisira extends Command
                                     GROUP BY P.[user]
                                     HAVING count(id)>1"));
         
+
+        $subject = "Evento en Licencias Nisira";
+        $for = "sistemas.proserla@gmail.com";
+        
+
         foreach ($data as $key => $value) {
-            var_dump($value->user);
+            $msjEvento="Más de un Nisira abierto, bases de datos=".$value->evento;
+            $usuario=$value->user;
+            $evento=new Evento();
+            $evento->user_nisira=$value->user;
+            $evento->descripcion=$msjEvento;
+            $evento->save();
+            try {
+                Mail::send('mail',compact('msjEvento','usuario'), function($msj) use($subject,$for){
+                    $msj->from("sistemas.proserla@gmail.com","Sistemas Proserla");
+                    $msj->subject($subject);
+                    $msj->to($for);
+                });
+                echo "enviado <br>";
+            } catch (\Exception $ex) {
+                
+            }
         }
 
     }
