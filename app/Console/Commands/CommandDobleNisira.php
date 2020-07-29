@@ -52,6 +52,7 @@ class CommandDobleNisira extends Command
                                                     FOR XML PATH (''))
                                                 , 1, 0, '') as evento  
                                     from PRIMARYKEYS as P
+                                    WHERE inicio<DATEADD(minute, -5, GETDATE())
                                     GROUP BY P.[user]
                                     HAVING count(id)>1"));
         
