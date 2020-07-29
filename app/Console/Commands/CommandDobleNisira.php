@@ -63,7 +63,7 @@ class CommandDobleNisira extends Command
 
         foreach ($data as $key => $value) {
             $usuario=$value->user;
-            $subject = "Evento en Licencias Nisira".$usuario;
+            $subject = "Evento en Licencias Nisira ".$usuario;
 
             $eventoEncontrado=Evento::where('tipo','doblenisira')
                                 ->where('user_nisira',$usuario)
