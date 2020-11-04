@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::group(['middleware' => ['cors']], function () {
+    Route::get('bp/boletas','BoletasPagoController@index');
+    Route::get('bp/boletas/show','BoletasPagoController@show');
+
     // if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     //     header('Access-Control-Allow-Methods: GET, POST, DELETE');
     //     header('Access-Control-Allow-Headers: Authorization');
@@ -33,5 +36,6 @@ Route::group(['middleware' => ['cors']], function () {
     Route::post('edt/aprobar','AprobacionController@aprobar');
     Route::post('edt/login','AprobacionController@login');
 });
+
 
 Route::get('licencias', 'LicenciasController@index');
