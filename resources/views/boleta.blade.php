@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
     <style>
-        .content-table{
-            display: grid;
-            grid-gap: 0;
-            grid-template-columns: repeat(4, 1fr);
+        table{
+            width: 100%;
+            /* display: flex; */
+            /* grid-gap: 0; */
+            /* grid-template-columns: repeat(4, 1fr); */
         }
         .content-children{
-            border: 1px solid #000;
-            height: 100%;
-            padding: 0 5px;
-            display: flex
+            width: 25%;
         }
         .center{
             text-align: center
@@ -23,67 +17,97 @@
         .right{
             text-align: right;
         }
-        .content-children table{
-            width: 100%
+        .table{
+            font-size: 12px;
+            border-collapse: collapse;
         }
+        .table>tbody>tr>td{
+            vertical-align: top
+        }
+        .table>tbody>tr>td,.table>thead>tr>th{
+            padding: 5px;
+            border: 1px solid black;
+        }
+        h1,h2,h3,h4,h5,h6{
+            width: 100%;
+        }
+
+        /* .content-children table{
+            width: 100%
+        } */
     </style>
 </head>
 <body>
-    <h4> {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }} </h4>
-    <div class="content-table">
-        <div class="content-children center">
-            REMUNERACIONES
-        </div>
-        <div class="content-children center">
-            RETENCIONES AL TRABAJADOR
-        </div>
-        <div class="content-children center">
-            CONTRIBUCIONES DEL EMPLEADOR
-        </div>
-        <div class="content-children center">
-            TIEMPOS
-        </div>
-        <div class="content-children">
-            <table>
-                @foreach ($ingresos as $item)
-                    <tr>
-                        <td> {{ $item->DESCR_CORTA }} </td>
-                        <td class="right"> {{ $item->CALCULO }} </td>
-                    </tr>    
-                @endforeach
-            </table>
-        </div>
-        <div class="content-children">
-            <table>
-                @foreach ($descuentos as $item)
-                    <tr>
-                        <td> {{ $item->DESCR_CORTA }} </td>
-                        <td class="right"> {{ $item->CALCULO }} </td>
-                    </tr>    
-                @endforeach
-            </table>
-        </div>
-        <div class="content-children">
-            <table>
-                @foreach ($seguro as $item)
-                    <tr>
-                        <td> {{ $item->DESCR_CORTA }} </td>
-                        <td class="right"> {{ $item->CALCULO }} </td>
-                    </tr>    
-                @endforeach
-            </table>
-        </div>
-        <div class="content-children">
-            <table>
-                @foreach ($tiempos as $item)
-                    <tr>
-                        <td> {{ $item->DESCR_CORTA }} </td>
-                        <td class="right"> {{ $item->CALCULO }} </td>
-                    </tr>    
-                @endforeach
-            </table>
-        </div>
-    </div>
+    <table>
+        <tr>
+            <td>Sueldo:</td>
+            <td>{{ $sueldo }}</td>
+        </tr>
+    </table>
+    <h5>sueldo</h5>
+        <h5 class="center"> {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }} </h5>
+        <table class="content-table table">
+            <thead>
+                <tr>
+                    <th class="content-children center">
+                        REMUNERACIONES
+                    </th>
+                    <th class="content-children center">
+                        RETENCIONES AL TRABAJADOR
+                    </th>
+                    <th class="content-children center">
+                        CONTRIBUCIONES DEL EMPLEADOR
+                    </th>
+                    <th class="content-children center">
+                        TIEMPOS
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <table>
+                            @foreach ($ingresos as $item)
+                                <tr>
+                                    <td> {{ $item->DESCR_CORTA }} </td>
+                                    <td class="right"> {{ $item->CALCULO }} </td>
+                                </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            @foreach ($descuentos as $item)
+                                <tr>
+                                    <td> {{ $item->DESCR_CORTA }} </td>
+                                    <td class="right"> {{ $item->CALCULO }} </td>
+                                </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            @foreach ($seguro as $item)
+                                <tr>
+                                    <td> {{ $item->DESCR_CORTA }} </td>
+                                    <td class="right"> {{ $item->CALCULO }} </td>
+                                </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            @foreach ($tiempos as $item)
+                                <tr>
+                                    <td> {{ $item->DESCR_CORTA }} </td>
+                                    <td class="right">{{ $item->CALCULO }}</td>
+                                </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     {{-- {{ $ingresos }} --}}
 </body>
 </html>
