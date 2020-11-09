@@ -74,10 +74,10 @@ class BoletasPagoController extends Controller
                 WHERE MP.idmovimiento IN ($sCodigo)
                 AND C.DESCR_CORTA='BASICO'
                 AND IDTIPOCONCEPTO='IN'
-                AND MP.fecha_proceso > PE.FECHA_INICIOPLANILLA
+                -- AND MP.fecha_proceso > PE.FECHA_INICIOPLANILLA
                 ORDER BY FECHA_INICIOPLANILLA DESC",
                 $arrayCodigos)[0];
-
+        // dd($datos);
         //REMUNERACIONES
         $ingresos=DB::connection('sqlsrv')
                 ->select("SELECT SUM(D.CALCULO) CALCULO, C.DESCR_CORTA, C.IDTIPOCONCEPTO 
@@ -138,7 +138,10 @@ ORDER BY D.IDCONCEPTO ASC",
                                 MP.IDCODIGOGENERAL,
                                 RTRIM(PL.TIPO_ENVIO) ENVIO,
                                 SUBSTRING(MP.PERIODO, 1, 4) anio,
-                                MAX(CASE WHEN PL.TIPO_ENVIO = 'S'  THEN DATEPART(ISO_WEEK,PP.FECHA_INI) ELSE MP.SEMANA END) semana,
+                                MAX(CASE 
+                                        WHEN PL.TIPO_ENVIO = 'S' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                        WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
+                                        ELSE SUBSTRING(MP.PERIODO, 5, 2) END) semana,
                                 FORMAT(MIN(PP.FECHA_INI),'dd/MM/yyyy') FECHA_INI, 
                                 FORMAT(MAX(PP.FECHA_FIN),'dd/MM/yyyy') FECHA_FIN 
                         FROM MOVIMIENTO_PLANILLA MP
@@ -164,7 +167,6 @@ ORDER BY D.IDCONCEPTO ASC",
                 "totales" => $totales,
                 "periodo" => $periodo
         ];
-        // dd($lista);
 
         $data = [
                 'titulo' => 'Styde.net'

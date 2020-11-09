@@ -68,7 +68,7 @@
     <br>
     <br>
     <h3 class="center">BOLETA DE REMUNERACIONES</h3>
-    <h5 class="center"> {{ ($periodo->ENVIO == 'S' ? 'SEMANA': 'QUINCENA') }} {{ $periodo->semana }} </h5>
+    <h5 class="center"> {{ ($periodo->ENVIO == 'S' ? 'SEMANA': ($periodo->ENVIO == 'Q' ? 'QUINCENA': 'MES') ) }} {{ $periodo->semana }} </h5>
     <h5 class="center"> {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }} </h5>
     <br>
     <table class="table-14">
