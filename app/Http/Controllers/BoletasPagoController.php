@@ -19,8 +19,7 @@ class BoletasPagoController extends Controller
                 $sqlsrv_empresa="sqlsrv_jayanca";
         }
         $lista=DB::connection($sqlsrv_empresa)
-                ->select(DB::raw("SET DATEFIRST 1;".
-                "SELECT	MP.TIPO tipo,
+                ->select(DB::raw("SELECT MP.TIPO tipo,
                         MP.IDPLANILLA idplanilla,
                         MIN(MP.PERIODO) min_periodo,
                         MIN(MP.SEMANA) min_semana,
