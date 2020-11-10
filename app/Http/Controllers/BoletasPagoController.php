@@ -173,7 +173,7 @@ class BoletasPagoController extends Controller
                                 INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA = MP.SEMANA
                                 where idmovimiento IN ($sCodigo)
                                 GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO,SUBSTRING(MP.PERIODO, 1, 4)
-                        )",
+                        ) DATA",
                         $arrayCodigos)[0];
      
         $lista=[
