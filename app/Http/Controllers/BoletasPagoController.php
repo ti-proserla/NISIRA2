@@ -156,22 +156,24 @@ class BoletasPagoController extends Controller
         }
 
         $periodo=DB::connection($sqlsrv_empresa)
-                ->select("SET DATEFIRST 1;".
-                        "SELECT 
-                                MP.IDCODIGOGENERAL,
-                                RTRIM(PL.TIPO_ENVIO) ENVIO,
-                                SUBSTRING(MP.PERIODO, 1, 4) anio,
-                                MAX(CASE 
-                                        WHEN PL.TIPO_ENVIO = 'S' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
-                                        WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
-                                        ELSE SUBSTRING(MP.PERIODO, 5, 2) END) semana,
-                                FORMAT(MIN(PP.FECHA_INI),'dd/MM/yyyy') FECHA_INI, 
-                                FORMAT(MAX(PP.FECHA_FIN),'dd/MM/yyyy') FECHA_FIN 
-                        FROM MOVIMIENTO_PLANILLA MP
-                        INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
-                        INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA = MP.SEMANA
-                        where idmovimiento IN ($sCodigo)
-                        GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO,SUBSTRING(MP.PERIODO, 1, 4)  ",
+                ->select("SELECT * FROM (
+                                SET DATEFIRST 1;
+                                SELECT 
+                                        MP.IDCODIGOGENERAL,
+                                        RTRIM(PL.TIPO_ENVIO) ENVIO,
+                                        SUBSTRING(MP.PERIODO, 1, 4) anio,
+                                        MAX(CASE 
+                                                WHEN PL.TIPO_ENVIO = 'S' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                                WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
+                                                ELSE SUBSTRING(MP.PERIODO, 5, 2) END) semana,
+                                        FORMAT(MIN(PP.FECHA_INI),'dd/MM/yyyy') FECHA_INI, 
+                                        FORMAT(MAX(PP.FECHA_FIN),'dd/MM/yyyy') FECHA_FIN 
+                                FROM MOVIMIENTO_PLANILLA MP
+                                INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
+                                INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA = MP.SEMANA
+                                where idmovimiento IN ($sCodigo)
+                                GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO,SUBSTRING(MP.PERIODO, 1, 4)
+                        )",
                         $arrayCodigos)[0];
      
         $lista=[
