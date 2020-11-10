@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::group(['middleware' => ['cors']], function () {
-    Route::get('bp/boletas','BoletasPagoController@index');
+    Route::post('bp/boletas','BoletasPagoController@index');
     Route::get('bp/boletas/show','BoletasPagoController@show');
 
     // if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {

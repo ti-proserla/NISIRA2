@@ -96,7 +96,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => '172.16.1.113',
             'port' => '1433',
-            'database' => 'PROSERLA',
+            'database' => 'PROSERLA2020',
             'username' => 'sa',
             'password' => 'admin2019.rar',
             'charset' => 'utf8',
@@ -104,7 +104,19 @@ return [
             'prefix_indexes' => true,
             'strict' => false,
         ],
-
+        'sqlsrv_jayanca' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => '172.16.1.113',
+            'port' => '1433',
+            'database' => 'JAYANCA',
+            'username' => 'sa',
+            'password' => 'admin2019.rar',
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+        ],
     ],
 
     /*
