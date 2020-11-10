@@ -156,9 +156,7 @@ class BoletasPagoController extends Controller
         }
 
         $periodo=DB::connection($sqlsrv_empresa)
-                ->select("SELECT * FROM (
-                                SET DATEFIRST 1;
-                                SELECT 
+                ->select("SELECT 
                                         MP.IDCODIGOGENERAL,
                                         RTRIM(PL.TIPO_ENVIO) ENVIO,
                                         SUBSTRING(MP.PERIODO, 1, 4) anio,
@@ -172,8 +170,7 @@ class BoletasPagoController extends Controller
                                 INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
                                 INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA = MP.SEMANA
                                 where idmovimiento IN ($sCodigo)
-                                GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO,SUBSTRING(MP.PERIODO, 1, 4)
-                        ) DATA",
+                                GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO,SUBSTRING(MP.PERIODO, 1, 4)",
                         $arrayCodigos)[0];
      
         $lista=[
