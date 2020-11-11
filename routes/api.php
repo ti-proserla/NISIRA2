@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::group(['middleware' => ['cors']], function () {
+    Route::resource('cuenta_trabajador', 'CuentaTrabajadorController');
     Route::post('bp/boletas','BoletasPagoController@index');
     Route::get('bp/boletas/show','BoletasPagoController@show');
 

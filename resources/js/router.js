@@ -8,6 +8,10 @@ var routes =[
         path: '', 
         component: require('./Home.vue').default,
     },
+    { 
+        path: '/boletas', 
+        component: require('./Boletas.vue').default,
+    },
     // {
     //     path: '/*',
     //     component: require('./view/404.vue').default
@@ -18,7 +22,7 @@ var routes =[
 
 
 var router=new VueRouter({
-    // mode: 'history',
+    mode: 'history',
     routes,
     linkExactActiveClass: "active",
     scrollBehavior (to, from, savedPosition) {

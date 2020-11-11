@@ -8,7 +8,7 @@
     </head>
     <body>
         <div id="app"></div>
-        <script src="/js/app.js"></script>
         <script>window.url_base="{{ asset('api/') }}"</script>
+        <script src="/js/app.js"></script>
     </body>
 </html>

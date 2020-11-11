@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a350ec69d1532e06fc3685717dcb676",
+    "content-hash": "4c3b36efa6f03af16b4cd10c87cea82b",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -639,6 +639,74 @@
                 "laravel"
             ],
             "time": "2020-04-28T08:47:37+00:00"
+        },
+        {
+            "name": "giansalex/peru-consult",
+            "version": "v4.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/giansalex/peru-consult.git",
+                "reference": "d0b3f8490719cdba5df3afd2c923e7ea869ef0de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/giansalex/peru-consult/zipball/d0b3f8490719cdba5df3afd2c923e7ea869ef0de",
+                "reference": "d0b3f8490719cdba5df3afd2c923e7ea869ef0de",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "behat/behat": "^3.5",
+                "clue/block-react": "^1.3",
+                "phpstan/phpstan": "^0.11.15",
+                "phpunit/phpunit": "^7"
+            },
+            "suggest": {
+                "react/http": "Allow Dni, Ruc async requests"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Peru\\": "src/Peru/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Giancarlos Salas",
+                    "email": "giansalex@gmail.com"
+                }
+            ],
+            "description": "Consulta gratuita de DNI, RUC en Perú",
+            "homepage": "https://github.com/giansalex/peru-consult",
+            "keywords": [
+                "DNI",
+                "consulta-dni",
+                "consulta-ruc",
+                "peru",
+                "reniec",
+                "ruc",
+                "sunat"
+            ],
+            "funding": [
+                {
+                    "url": "https://paypal.me/giansalex",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://yape.giansalex.dev/",
+                    "type": "custom"
+                }
+            ],
+            "time": "2020-10-16T18:51:45+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -4395,6 +4463,7 @@
                 "faker",
                 "fixtures"
             ],
+            "abandoned": true,
             "time": "2019-12-12T13:22:17+00:00"
         },
         {
@@ -5192,6 +5261,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
