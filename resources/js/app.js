@@ -16,6 +16,10 @@ window.store=new Vuex.Store({
       state.cuenta=cuenta;
       localStorage.setItem('cuenta_personal',JSON.stringify(cuenta));
     },
+    auth_close(state){
+      state.cuenta=null;
+      localStorage.removeItem('cuenta_personal');
+    }
   }
 });
 

@@ -60,12 +60,17 @@ class CuentaTrabajadorController extends Controller
         }
 
         $lista=DB::connection($sqlsrv_empresa)
-                ->select(DB::raw("SELECT    IDCODIGOGENERAL codigo,
-                                            A_MATERNO a_materno,
-                                            A_PATERNO a_pateno,
-                                            NOMBRES nombres,
+                ->select(DB::raw("SELECT    PG.IDCODIGOGENERAL codigo,
+                                            PG.A_MATERNO a_materno,
+                                            PG.A_PATERNO a_paterno,
+                                            PG.NOMBRES nombres,
                                             '$empresa' empresa 
-                                FROM PERSONAL_GENERAL WHERE IDCODIGOGENERAL=? AND FECHA_NACIMIENTO=?"),
+                                FROM PERSONAL_GENERAL PG
+                                INNER JOIN PERSONAL P ON  P.IDCODIGOGENERAL=PG.IDCODIGOGENERAL
+                                WHERE PG.IDCODIGOGENERAL=? 
+                                AND PG.FECHA_NACIMIENTO=? 
+                                AND P.IDPLANILLA<>'FIJ' 
+                                AND P.IDPLANILLA<>'ADM'"),
                 [$codigo,$fecha_nacimiento]);
         if (count($lista)==0) {
             return response()->json([
