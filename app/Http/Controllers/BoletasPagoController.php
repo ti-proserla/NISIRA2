@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use PDF;
 
+Use App\Model\HistorialDescargas;
+
 class BoletasPagoController extends Controller
 {
     public function index(Request $request){
@@ -183,7 +185,9 @@ class BoletasPagoController extends Controller
                 "totales" => $totales,
                 "periodo" => $periodo
         ];
-        
+        $historial=new HistorialDescargas();
+        $historial->codigo_personal=$codigo;
+        $historial->codigo_personal=$codigo;
         return PDF::loadView('boleta', $lista)
                 ->download('boleta_pago.pdf');
     }
