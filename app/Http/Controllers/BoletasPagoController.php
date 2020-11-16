@@ -185,9 +185,12 @@ class BoletasPagoController extends Controller
                 "totales" => $totales,
                 "periodo" => $periodo
         ];
-        $historial=new HistorialDescargas();
-        $historial->codigo_personal=$codigo;
-        $historial->codigo_personal=$codigo;
+
+        if ($request->has('data')) {
+                return response()
+                        ->json($lista);
+        }
+
         return PDF::loadView('boleta', $lista)
                 ->download('boleta_pago.pdf');
     }
