@@ -47,8 +47,9 @@ class CuentaTrabajadorController extends Controller
      */
     public function store(Request $request)
     {
-        $codigo=$request->codigo;
-        $fecha_nacimiento=$request->fecha_nacimiento;
+        /**
+         * Seleccionar empresa
+         */
         $empresa=$request->empresa;
         switch ($empresa) {
             case '01':
@@ -58,32 +59,78 @@ class CuentaTrabajadorController extends Controller
                 $sqlsrv_empresa="sqlsrv_jayanca";
                 break;
         }
+        switch ($request->planilla) {
+            case 'ADM':
+                $codigo=$request->codigo;
+                $password=$request->password;
+                $cuenta=CuentaTrabajador::where('CODIGO',$codigo)
+                    ->where('PASSWORD',$password)
+                    ->first();
+                if ($cuenta!=null) {
+                    $lista=DB::connection($sqlsrv_empresa)
+                            ->select(DB::raw("SELECT    PG.IDCODIGOGENERAL codigo,
+                                                        PG.A_MATERNO a_materno,
+                                                        PG.A_PATERNO a_paterno,
+                                                        PG.NOMBRES nombres,
+                                                        '$empresa' empresa 
+                                            FROM PERSONAL_GENERAL PG
+                                            INNER JOIN PERSONAL P ON  P.IDCODIGOGENERAL=PG.IDCODIGOGENERAL
+                                            WHERE PG.IDCODIGOGENERAL=? 
+                                            AND (P.IDPLANILLA='FIJ'  
+                                            OR P.IDPLANILLA='ADM')"),
+                            [$codigo]);
+                    if (count($lista)==0) {
+                        return response()->json([
+                            "status"    =>"ERROR",
+                            "message"   =>"No existe en la Planilla."
+                        ]);
+                    }else{
+                        return response()->json([
+                            "status"    =>"OK",
+                            "message"   =>"Personal encontrado.",
+                            "data"      =>$lista[0]
+                        ]);
+                    }
+                }else {
+                    return response()->json([
+                        "status"    =>"ERROR",
+                        "message"   =>"Cuenta no existente."
+                    ]);
+                }
 
-        $lista=DB::connection($sqlsrv_empresa)
-                ->select(DB::raw("SELECT    PG.IDCODIGOGENERAL codigo,
-                                            PG.A_MATERNO a_materno,
-                                            PG.A_PATERNO a_paterno,
-                                            PG.NOMBRES nombres,
-                                            '$empresa' empresa 
-                                FROM PERSONAL_GENERAL PG
-                                INNER JOIN PERSONAL P ON  P.IDCODIGOGENERAL=PG.IDCODIGOGENERAL
-                                WHERE PG.IDCODIGOGENERAL=? 
-                                AND PG.FECHA_NACIMIENTO=? 
-                                AND P.IDPLANILLA<>'FIJ' 
-                                AND P.IDPLANILLA<>'ADM'"),
-                [$codigo,$fecha_nacimiento]);
-        if (count($lista)==0) {
-            return response()->json([
-                "status"    =>"ERROR",
-                "message"   =>"Personal no registrado."
-            ]);
-        }else{
-            return response()->json([
-                "status"    =>"OK",
-                "message"   =>"Personal encontrado.",
-                "data"      =>$lista[0]
 
-            ]);
+                break;
+            
+            default:
+                $codigo=$request->codigo;
+                $fecha_nacimiento=$request->fecha_nacimiento;
+                $lista=DB::connection($sqlsrv_empresa)
+                        ->select(DB::raw("SELECT    PG.IDCODIGOGENERAL codigo,
+                                                    PG.A_MATERNO a_materno,
+                                                    PG.A_PATERNO a_paterno,
+                                                    PG.NOMBRES nombres,
+                                                    '$empresa' empresa 
+                                        FROM PERSONAL_GENERAL PG
+                                        INNER JOIN PERSONAL P ON  P.IDCODIGOGENERAL=PG.IDCODIGOGENERAL
+                                        WHERE PG.IDCODIGOGENERAL=? 
+                                        AND PG.FECHA_NACIMIENTO=? 
+                                        AND P.IDPLANILLA<>'FIJ' 
+                                        AND P.IDPLANILLA<>'ADM'"),
+                        [$codigo,$fecha_nacimiento]);
+                if (count($lista)==0) {
+                    return response()->json([
+                        "status"    =>"ERROR",
+                        "message"   =>"Datos Incorrectos."
+                    ]);
+                }else{
+                    return response()->json([
+                        "status"    =>"OK",
+                        "message"   =>"Personal encontrado.",
+                        "data"      =>$lista[0]
+        
+                    ]);
+                }
+                break;
         }
         // $codigo=$request->codigo;
         // $password=$request->password;

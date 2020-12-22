@@ -1,8 +1,16 @@
 <template>
     <div class="row justify-content-md-center">
-        <div class="col-sm-5" v-if="pagos.length==0">
+        <div class="col-lg-5" v-if="pagos.length==0">
             <div class="card">
-                <div class="card-body">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item tag">
+                        <a @click="login_cuenta.planilla='GEN'" class="nav-link" :class="(login_cuenta.planilla=='GEN')?'active':''">General</a>
+                    </li>
+                    <li class="nav-item tag">
+                        <a @click="login_cuenta.planilla='ADM'" class="nav-link" :class="(login_cuenta.planilla=='ADM')?'active':''">Administrativos</a>
+                    </li>
+                </ul>
+                <div class="card-body" v-if="login_cuenta.planilla=='GEN'">
                     <div class="row justify-content-md-center">
                         <div class="col-12 form-group">
                             <label for="">Empresa:</label>
@@ -18,6 +26,29 @@
                         <div class="col-12 form-group">
                             <label for="">Fecha Nacimiento</label>
                             <input v-model="login_cuenta.fecha_nacimiento" type="date" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <button @click="consultar()" class="btn btn-primary form-control">Ingresar</button>
+                            <!-- <router-link to="/registrar">Registrar</router-link> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" v-if="login_cuenta.planilla=='ADM'">
+                    <div class="row justify-content-md-center">
+                        <div class="col-12 form-group">
+                            <label for="">Empresa:</label>
+                            <select v-model="login_cuenta.empresa" class="form-control">
+                                <option value="01">PROSERLA</option>
+                                <option value="02">JAYANCA FRUITS</option>
+                            </select>
+                        </div>
+                        <div class="col-12 form-group">
+                            <label for="">Código Trabajador</label>
+                            <input v-model="login_cuenta.codigo" type="text" class="form-control">
+                        </div>
+                        <div class="col-12 form-group">
+                            <label for="">Contraseña</label>
+                            <input v-model="login_cuenta.password" type="password" class="form-control">
                         </div>
                         <div class="col-12">
                             <button @click="consultar()" class="btn btn-primary form-control">Ingresar</button>
@@ -53,6 +84,12 @@
         </div>
     </div>
 </template>
+<style >
+    .tag{
+        width: 50%;
+        text-align: center;
+    }
+</style>
 <script>
 import { mapState,mapMutations } from 'vuex'
 export default {
@@ -62,8 +99,9 @@ export default {
             login_cuenta: {
                 codigo: '',
                 empresa: '01',
-                fecha_nacimiento: null
-                },
+                fecha_nacimiento: null,
+                planilla: 'GEN'
+            },
             pagos: [],
         }
     },
@@ -83,7 +121,7 @@ export default {
                         this.$store.commit('auth_success', res.data);                
                         break;
                     case 'ERROR':
-                        alert("datos incorrectos");
+                        alert(res.message);
                         break;
                     default:
                         break;
