@@ -1945,16 +1945,39 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  // data() {
+  //   return {
+  //     open: false 
+  //   }
+  // },
   components: {
     Login: _Login_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['cuenta'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['cuenta', 'sidebar'])),
   methods: {
     salir: function salir() {
       this.$store.commit('auth_close');
+    },
+    cerrar: function cerrar() {
+      this.$store.commit('sidebar_close');
+    },
+    sidebar_open: function sidebar_open() {
+      this.$store.commit('sidebar_open');
     }
   }
 });
@@ -2246,7 +2269,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, "\n.mr-right{\n  margin-left: auto;\n}\n", ""]);
+exports.push([module.i, "\n.mr-right{\n  margin-left: auto;\n}\n.navbar-collapse.show{\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 100;\n  background-color: #ffffff;\n}\n", ""]);
 
 // exports
 
@@ -3422,11 +3445,26 @@ var render = function() {
           })
         ]),
         _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "navbar-toggler",
+            attrs: { type: "button" },
+            on: {
+              click: function($event) {
+                return _vm.sidebar_open()
+              }
+            }
+          },
+          [_c("span", { staticClass: "navbar-toggler-icon" })]
+        ),
+        _vm._v(" "),
         _vm.cuenta != null
           ? _c(
               "div",
               {
                 staticClass: "collapse navbar-collapse",
+                class: _vm.sidebar == true ? "show" : "",
                 attrs: { id: "navbarSupportedContent" }
               },
               [
@@ -3437,7 +3475,15 @@ var render = function() {
                     [
                       _c(
                         "router-link",
-                        { staticClass: "nav-link", attrs: { to: "/" } },
+                        {
+                          staticClass: "nav-link",
+                          attrs: { to: "/" },
+                          nativeOn: {
+                            click: function($event) {
+                              return _vm.cerrar()
+                            }
+                          }
+                        },
                         [_vm._v("Datos")]
                       )
                     ],
@@ -3450,7 +3496,15 @@ var render = function() {
                     [
                       _c(
                         "router-link",
-                        { staticClass: "nav-link", attrs: { to: "/boletas" } },
+                        {
+                          staticClass: "nav-link",
+                          attrs: { to: "/boletas" },
+                          nativeOn: {
+                            click: function($event) {
+                              return _vm.cerrar()
+                            }
+                          }
+                        },
                         [_vm._v("Boletas de Pago")]
                       )
                     ],
@@ -3464,7 +3518,8 @@ var render = function() {
                     staticClass: "btn btn-danger btn-sm",
                     on: {
                       click: function($event) {
-                        return _vm.salir()
+                        _vm.cerrar()
+                        _vm.salir()
                       }
                     }
                   },
@@ -20836,7 +20891,8 @@ var router = __webpack_require__(/*! ./router.js */ "./resources/js/router.js")[
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_2__["default"]);
 window.store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
   state: {
-    cuenta: JSON.parse(localStorage.getItem('cuenta_personal')) || null
+    cuenta: JSON.parse(localStorage.getItem('cuenta_personal')) || null,
+    sidebar: false
   },
   mutations: {
     auth_success: function auth_success(state, cuenta) {
@@ -20846,6 +20902,13 @@ window.store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
     auth_close: function auth_close(state) {
       state.cuenta = null;
       localStorage.removeItem('cuenta_personal');
+    },
+    sidebar_close: function sidebar_close(state) {
+      state.sidebar = false;
+      console.log('close');
+    },
+    sidebar_open: function sidebar_open(state) {
+      state.sidebar = true;
     }
   }
 });

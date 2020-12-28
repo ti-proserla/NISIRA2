@@ -10,6 +10,7 @@ Vue.use(Vuex)
 window.store=new Vuex.Store({
   state: {
       cuenta: JSON.parse(localStorage.getItem('cuenta_personal'))||null,
+      sidebar: false
   },
   mutations: {        
     auth_success(state,cuenta){
@@ -19,6 +20,13 @@ window.store=new Vuex.Store({
     auth_close(state){
       state.cuenta=null;
       localStorage.removeItem('cuenta_personal');
+    },
+    sidebar_close(state){
+      state.sidebar=false;
+      console.log('close');
+    },
+    sidebar_open(state){
+      state.sidebar=true;
     }
   }
 });
