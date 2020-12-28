@@ -112,14 +112,24 @@ class AprobacionController extends Controller
         $id=$request->id;
         $usuario=$request->usuario;
         $formulario=$request->formulario;
+        
+        $updateData=[];
+        if ( $tabla == 'REQINTERNO' ) {
+            $updateData=[
+                "idestado"=>"AP"
+            ];
+        }else {
+            $updateData=[
+                "idestado"=>"AP",
+                "nrsidusuario_ap"=>$usuario,
+                "nsrfecha_ap"=>Carbon::now(),
+            ];
+        }
+
         $operacion=DB::connection('sqlsrv')
                             ->table($tabla)
                             ->where($primarykey,$id)
-                            ->update([
-                                "idestado"=>"AP",
-                                "nrsidusuario_ap"=>$usuario,
-                                "nsrfecha_ap"=>Carbon::now(),
-                            ]);
+                            ->update($updateData);
                             // ->select(DB::raw("UPDATE $tabla set idestado = 'AP' where  $primarykey= '$id'"),[]);
         $operacion2=DB::connection('sqlsrv')
                             ->table('LOGESTADOS')
