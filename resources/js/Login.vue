@@ -121,7 +121,11 @@ export default {
                         this.$store.commit('auth_success', res.data);                
                         break;
                     case 'ERROR':
-                        alert(res.message);
+                        swal({
+                            title: res.message,
+                            icon: "error",
+                        });
+                        // alert(res.message);
                         break;
                     default:
                         break;

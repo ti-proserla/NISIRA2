@@ -59,46 +59,58 @@ class CuentaTrabajadorController extends Controller
                 $sqlsrv_empresa="sqlsrv_jayanca";
                 break;
         }
-        switch ($request->planilla) {
+
+        $planilla=$request->planilla;
+        switch ($planilla) {
             case 'ADM':
                 $codigo=$request->codigo;
                 $password=$request->password;
-                $cuenta=CuentaTrabajador::where('CODIGO',$codigo)
-                    ->where('PASSWORD',$password)
-                    ->first();
-                if ($cuenta!=null) {
-                    $lista=DB::connection($sqlsrv_empresa)
-                            ->select(DB::raw("SELECT    PG.IDCODIGOGENERAL codigo,
-                                                        PG.A_MATERNO a_materno,
-                                                        PG.A_PATERNO a_paterno,
-                                                        PG.NOMBRES nombres,
-                                                        '$empresa' empresa 
-                                            FROM PERSONAL_GENERAL PG
-                                            INNER JOIN PERSONAL P ON  P.IDCODIGOGENERAL=PG.IDCODIGOGENERAL
-                                            WHERE PG.IDCODIGOGENERAL=? 
-                                            AND (P.IDPLANILLA='FIJ'  
-                                            OR P.IDPLANILLA='ADM')"),
-                            [$codigo]);
-                    if (count($lista)==0) {
-                        return response()->json([
-                            "status"    =>"ERROR",
-                            "message"   =>"No existe en la Planilla."
-                        ]);
-                    }else{
-                        return response()->json([
-                            "status"    =>"OK",
-                            "message"   =>"Personal encontrado.",
-                            "data"      =>$lista[0]
-                        ]);
-                    }
-                }else {
+                
+                $lista=DB::connection($sqlsrv_empresa)
+                        ->select(DB::raw("SELECT    PG.IDCODIGOGENERAL codigo,
+                                                    PG.A_MATERNO a_materno,
+                                                    PG.A_PATERNO a_paterno,
+                                                    PG.NOMBRES nombres,
+                                                    '$planilla' planilla,
+                                                    '$empresa' empresa 
+                                        FROM PERSONAL_GENERAL PG
+                                        INNER JOIN PERSONAL P ON  P.IDCODIGOGENERAL=PG.IDCODIGOGENERAL
+                                        WHERE PG.IDCODIGOGENERAL=? 
+                                        AND (P.IDPLANILLA='FIJ'  
+                                        OR P.IDPLANILLA='ADM')"),
+                        [$codigo]);
+                if (count($lista)==0) {
                     return response()->json([
                         "status"    =>"ERROR",
-                        "message"   =>"Cuenta no existente."
+                        "message"   =>"No existe en la Planilla."
                     ]);
+                }else{
+
+                    $cuenta=CuentaTrabajador::where('CODIGO',$codigo)
+                        ->first();
+                    if ($cuenta==null) {
+                        $cuenta=new CuentaTrabajador();
+                        $cuenta->CODIGO =$lista[0]->codigo;  
+                        $cuenta->A_MATERNO =$lista[0]->a_materno;  
+                        $cuenta->A_PATERNO =$lista[0]->a_paterno;  
+                        $cuenta->NOMBRES =$lista[0]->nombres;  
+                        $cuenta->PASSWORD ="";
+                        $cuenta->save();  
+                    }
+                    
+                    if ($cuenta->PASSWORD==$password) {
+                        return response()->json([
+                                "status"    =>"OK",
+                                "message"   =>"Personal encontrado.",
+                                "data"      =>$lista[0]
+                            ]);
+                    }else {
+                        return response()->json([
+                            "status"    =>"ERROR",
+                            "message"   =>"Constraseña incorrecta."
+                            ]);
+                    }   
                 }
-
-
                 break;
             
             default:
@@ -109,6 +121,7 @@ class CuentaTrabajadorController extends Controller
                                                     PG.A_MATERNO a_materno,
                                                     PG.A_PATERNO a_paterno,
                                                     PG.NOMBRES nombres,
+                                                    '$planilla' planilla,
                                                     '$empresa' empresa 
                                         FROM PERSONAL_GENERAL PG
                                         INNER JOIN PERSONAL P ON  P.IDCODIGOGENERAL=PG.IDCODIGOGENERAL
@@ -131,90 +144,17 @@ class CuentaTrabajadorController extends Controller
                     ]);
                 }
                 break;
-        }
-        // $codigo=$request->codigo;
-        // $password=$request->password;
-        // $verificador=$request->verificador;
-        // $empresa=$request->empresa;
-        // if ($empresa=='01') {
-        //     $sqlsrv_empresa="sqlsrv_proserla"; 
-        // }
-        // if ($empresa=='02') {
-        //     $sqlsrv_empresa="sqlsrv_jayanca";
-        // }
-        // /**
-        //  * Existe trabajador en alguna empresa
-        //  */
-        // $encontrado=DB::connection($sqlsrv_empresa)
-        //         ->select("SELECT TOP 1 * 
-        //                 FROM PERSONAL_GENERAL 
-        //                 WHERE IDCODIGOGENERAL=?",[
-        //                     $codigo
-        //                 ]);
-        // if (0==count($encontrado)) {
-        //     return json_encode([
-        //         "status" => "ERROR",
-        //         "data"   => "El trabajador no existe en el sistema."
-        //     ]); 
-        // }
-
-        // /**
-        //  * Ya cuenta con contraseña
-        //  */
-        // $cuenta=CuentaTrabajador::where('CODIGO',$codigo)
-        //         ->first();
-        // if ($cuenta!=null) {
-        //     return json_encode([
-        //         "status" => "INFO",
-        //         "data"   => "El Trabajador ya se encuentra registrado",
-        //     ]); 
-        // }
-        
-        // $cs = new Dni(new ContextClient(), new DniParser());
-        // $person = $cs->get($codigo);
-        // if (!$person) {
-        //     return json_encode([
-        //         "status" => "ERROR",
-        //         "data"   => "No encontrado"
-        //     ]);
-        //     // echo 'Not found';
-        //     exit();
-        // }
-        // if ($person->codVerifica==$verificador) {
-        //     $cuenta=new CuentaTrabajador();
-        //     $cuenta->CODIGO=$codigo;
-        //     $cuenta->NOMBRES=$cuentas->nombres;
-        //     $cuenta->A_PATERNO=$cuentas->apellidoPaterno;
-        //     $cuenta->A_MATERNO=$cuentas->apellidoMaterno;
-        //     $cuenta->PASSWORD=$password;
-        //     $cuenta->save();
-        // }
-        // return json_encode([
-        //         "status" => "OK",
-        //         "data"   => 'Cuenta generada, ingresar.'
-        //     ]);        
+        }   
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+        
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        
     }
 
     /**
@@ -224,19 +164,18 @@ class CuentaTrabajadorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $codigo)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        // dd($request->all());
+        // $codigo=$request->codigo;
+        $password=$request->password;
+        $cuenta=CuentaTrabajador::where('CODIGO',$codigo)
+            ->first();
+        $cuenta->password=$password;
+        $cuenta->save();
+        return json_encode([
+                    "status" => "OK",
+                    "data"   => "Contraseña Actualizada"
+                ]);
     }
 }

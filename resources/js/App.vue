@@ -37,6 +37,7 @@
     bottom: 0;
     z-index: 100;
     background-color: #ffffff;
+    padding: 10px;
   }
 </style>
 <script>

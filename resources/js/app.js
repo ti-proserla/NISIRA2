@@ -1,4 +1,5 @@
 // require('./bootstrap');
+import swal from 'sweetalert'
 import Vue from 'vue'
 import App from './App.vue'
 window.axios = require('axios');
