@@ -8,23 +8,31 @@
                     <h6>DNI: {{ `${ cuenta.codigo }` }}</h6>
                     <h6>Nombres: {{ `${ cuenta.nombres }` }}</h6>
                     <h6>Apellidos: {{ `${ cuenta.a_paterno } ${ cuenta.a_materno }` }}</h6>
+                    <div class="text-right" v-if="cuenta.planilla=='ADM'">
+                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#exampleModal">
+                            Cambiar contraseña
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-5" v-if="cuenta.planilla=='ADM'">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="text-center">Cambiar contraseña</h4>
-                    <br>
-                    <div class="form-group">
-                        <h6>Contraseña Nueva</h6>
-                        <input v-model="data_password.password" type="password" class="form-control">
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h4 class="text-center">Cambiar contraseña</h4>
+                            <br>
+                            <div class="form-group">
+                                <h6>Contraseña Nueva</h6>
+                                <input v-model="data_password.password" type="password" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <h6>Confirmar contraseña nueva</h6>
+                                <input v-model="data_password.confirm_password" type="password" class="form-control">
+                            </div>
+                            <button @click="confirm_form()" class="btn btn-danger" :disabled="validate_password()">Guardar</button>
+                            
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <h6>Confirmar contraseña nueva</h6>
-                        <input v-model="data_password.confirm_password" type="password" class="form-control">
-                    </div>
-                    <button @click="confirm_form()" class="btn btn-danger" :disabled="validate_password()">Guardar</button>
                 </div>
             </div>
         </div>

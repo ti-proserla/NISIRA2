@@ -2114,6 +2114,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -3747,98 +3755,136 @@ var render = function() {
               "Apellidos: " +
                 _vm._s(_vm.cuenta.a_paterno + " " + _vm.cuenta.a_materno)
             )
-          ])
+          ]),
+          _vm._v(" "),
+          _vm.cuenta.planilla == "ADM"
+            ? _c("div", { staticClass: "text-right" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm btn-danger",
+                    attrs: {
+                      type: "button",
+                      "data-toggle": "modal",
+                      "data-target": "#exampleModal"
+                    }
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Cambiar contraseña\n                    "
+                    )
+                  ]
+                )
+              ])
+            : _vm._e()
         ])
-      ])
-    ]),
-    _vm._v(" "),
-    _vm.cuenta.planilla == "ADM"
-      ? _c("div", { staticClass: "col-sm-5" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-body" }, [
-              _c("h4", { staticClass: "text-center" }, [
-                _vm._v("Cambiar contraseña")
-              ]),
-              _vm._v(" "),
-              _c("br"),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-group" }, [
-                _c("h6", [_vm._v("Contraseña Nueva")]),
-                _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.data_password.password,
-                      expression: "data_password.password"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: { type: "password" },
-                  domProps: { value: _vm.data_password.password },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "exampleModal",
+            tabindex: "-1",
+            role: "dialog",
+            "aria-labelledby": "exampleModalLabel",
+            "aria-hidden": "true"
+          }
+        },
+        [
+          _c(
+            "div",
+            { staticClass: "modal-dialog", attrs: { role: "document" } },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _c("div", { staticClass: "modal-body" }, [
+                  _c("h4", { staticClass: "text-center" }, [
+                    _vm._v("Cambiar contraseña")
+                  ]),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("h6", [_vm._v("Contraseña Nueva")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.data_password.password,
+                          expression: "data_password.password"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "password" },
+                      domProps: { value: _vm.data_password.password },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.data_password,
+                            "password",
+                            $event.target.value
+                          )
+                        }
                       }
-                      _vm.$set(
-                        _vm.data_password,
-                        "password",
-                        $event.target.value
-                      )
-                    }
-                  }
-                })
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-group" }, [
-                _c("h6", [_vm._v("Confirmar contraseña nueva")]),
-                _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.data_password.confirm_password,
-                      expression: "data_password.confirm_password"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: { type: "password" },
-                  domProps: { value: _vm.data_password.confirm_password },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("h6", [_vm._v("Confirmar contraseña nueva")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.data_password.confirm_password,
+                          expression: "data_password.confirm_password"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "password" },
+                      domProps: { value: _vm.data_password.confirm_password },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.data_password,
+                            "confirm_password",
+                            $event.target.value
+                          )
+                        }
                       }
-                      _vm.$set(
-                        _vm.data_password,
-                        "confirm_password",
-                        $event.target.value
-                      )
-                    }
-                  }
-                })
-              ]),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-danger",
-                  attrs: { disabled: _vm.validate_password() },
-                  on: {
-                    click: function($event) {
-                      return _vm.confirm_form()
-                    }
-                  }
-                },
-                [_vm._v("Guardar")]
-              )
-            ])
-          ])
-        ])
-      : _vm._e()
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger",
+                      attrs: { disabled: _vm.validate_password() },
+                      on: {
+                        click: function($event) {
+                          return _vm.confirm_form()
+                        }
+                      }
+                    },
+                    [_vm._v("Guardar")]
+                  )
+                ])
+              ])
+            ]
+          )
+        ]
+      )
+    ])
   ])
 }
 var staticRenderFns = []
