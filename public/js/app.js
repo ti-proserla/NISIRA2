@@ -3775,7 +3775,7 @@ var render = function() {
                     }
                   ],
                   staticClass: "form-control",
-                  attrs: { type: "text" },
+                  attrs: { type: "password" },
                   domProps: { value: _vm.data_password.password },
                   on: {
                     input: function($event) {
@@ -3805,7 +3805,7 @@ var render = function() {
                     }
                   ],
                   staticClass: "form-control",
-                  attrs: { type: "text" },
+                  attrs: { type: "password" },
                   domProps: { value: _vm.data_password.confirm_password },
                   on: {
                     input: function($event) {

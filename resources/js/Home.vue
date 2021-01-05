@@ -18,11 +18,11 @@
                     <br>
                     <div class="form-group">
                         <h6>Contraseña Nueva</h6>
-                        <input v-model="data_password.password" type="text" class="form-control">
+                        <input v-model="data_password.password" type="password" class="form-control">
                     </div>
                     <div class="form-group">
                         <h6>Confirmar contraseña nueva</h6>
-                        <input v-model="data_password.confirm_password" type="text" class="form-control">
+                        <input v-model="data_password.confirm_password" type="password" class="form-control">
                     </div>
                     <button @click="confirm_form()" class="btn btn-danger" :disabled="validate_password()">Guardar</button>
                 </div>
