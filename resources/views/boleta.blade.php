@@ -165,7 +165,7 @@
                     </td>
                     <td>
                         <h4><b>TOT.APORTACION</b></h4>
-                        <h4 class="right"><b>{{ $totales["TOT_APORT_GRAL"] }}</b></h4>
+                        <h4 class="right"><b>{{ isset($totales["TOT_APORT_GRAL"]) ? $totales["TOT_APORT_GRAL"] : 0.00 }}</b></h4>
                     </td>
                     <td>
                         <h3><b>NETO A PAGAR</b></h3>
