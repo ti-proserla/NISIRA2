@@ -191,6 +191,10 @@ class BoletasPagoController extends Controller
                         ->json($lista);
         }
 
+        if ($request->has('termal_view')) {
+                return view('boleta_termica',$lista);
+        }
+
         return PDF::loadView('boleta', $lista)
                 ->download('boleta_pago.pdf');
     }
