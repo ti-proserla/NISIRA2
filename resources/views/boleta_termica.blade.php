@@ -5,9 +5,6 @@
     <style>
         table{
             width: 100%;
-            /* display: flex; */
-            /* grid-gap: 0; */
-            /* grid-template-columns: repeat(4, 1fr); */
         }
         .content-children{
             width: 25%;
@@ -19,8 +16,14 @@
             text-align: right;
         }
         table{
-            /* font-size: 12px; */
             border-collapse: collapse;
+            margin-bottom: 5px
+        }
+        .table-8{
+            font-size: 8px;
+        }
+        .table-10{
+            font-size: 10px;
         }
         .table-12{
             font-size: 12px;
@@ -31,28 +34,30 @@
         .table>tbody>tr>td{
             vertical-align: top
         }
-        .table>tbody>tr>td,.table>thead>tr>th,.table>tfoot>tr>td{
-            padding: 5px;
-            border: 1px solid black;
-        }
         h1,h2,h3,h4,h5,h6{
             width: 100%;
             margin: 0;
             font-weight: 400;
             margin-bottom: 4px
         }
-        .content-children-medium{
-            width: 75%;
+        h5{
+            font-size: 9px
         }
-
-        /* .content-children table{
-            width: 100%
-        } */
+        h6{
+            font-size: 8px
+        }
+        .content-children-medium{
+            width: 50%;
+        }
         .boleta{
-            width: 332px
+            width: 310px
         }
         .pl-3{
             padding-left: 1rem;
+        }
+        .table>tbody>tr>td,.table>thead>tr>th,.table>tfoot>tr>td{
+            padding: 5px;
+            border: 1px solid #888;
         }
     </style>
 </head>
@@ -72,12 +77,10 @@
                 </td>
             </tr>
         </table>
-        
         <hr>
         <h5 class="center"><b>BOLETA DE REMUNERACIONES</b></h5>
         <h5 class="center"> {{ ($periodo->ENVIO == 'S' ? 'SEMANA': ($periodo->ENVIO == 'Q' ? 'QUINCENA': 'MES') ) }} {{ $periodo->semana }}  ( {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }} ) </h5>
-        <br>
-        <table class="table-12">
+        <table class="table-8">
             <tr>
                 <td>Trabajador:</td>
                 <td>{{ $datos->A_PATERNO.' '.$datos->A_MATERNO.', '.$datos->NOMBRES }}</td>
@@ -103,95 +106,123 @@
                 <td>{{ $datos->COD_SPP }}</td>
             </tr>
         </table>
-        <hr>
-        <table class="table-12">
-            <tr>
-                <td>REMUNERACIONES</td>
-                <td class="right"><b>{{ $totales["TOT_INGRESOS"] }}</b></td>
-            </tr>
-        </table>
-        <hr>
-        <table class="table-12">
-            @foreach ($ingresos as $item)
+        <table class="table table-8">
+            <thead>
                 <tr>
-                    <td> {{ $item->DESCR_CORTA }} </td>
-                    <td class="right"> {{ $item->CALCULO }} </td>
-                </tr>    
-            @endforeach
-        </table>
-
-        <hr>
-        <table class="table-12">
-            <tr>
-                <td>RETENCIONES AL TRABAJADOR</td>
-                <td class="right"><b>{{ $totales["TOT_DESCUENTOS"] }}</b></td>
-            </tr>
-        </table>
-        <hr>
-        <table class="table-12">
-            @foreach ($descuentos as $item)
+                    <th class="content-children-medium">REMUNERACIONES</th>
+                    <th class="content-children-medium">RETENCIONES AL TRABAJADOR</th>
+                </tr>
+            </thead>
+            <tbody>
                 <tr>
-                    <td> {{ $item->DESCR_CORTA }} </td>
-                    <td class="right"> {{ $item->CALCULO }} </td>
-                </tr>    
-            @endforeach
-        </table>
-
-        <hr>
-        <table class="table-12">
-            <tr>
-                <td>CONTRIBUCIONES DEL EMPLEADOR</td>
-                <td class="right"><b>{{ isset($totales["TOT_APORT_GRAL"]) ? $totales["TOT_APORT_GRAL"] : 0.00 }}</b></td>
-            </tr>
-        </table>
-        <hr>
-        <table class="table-12">
-            @foreach ($seguro as $item)
+                    <td>
+                        <table>
+                            @foreach ($ingresos as $item)
+                            <tr>
+                                <td> {{ $item->DESCR_CORTA }} </td>
+                                <td class="right"> {{ $item->CALCULO }} </td>
+                            </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table-8">
+                            @foreach ($descuentos as $item)
+                            <tr>
+                                <td> {{ $item->DESCR_CORTA }} </td>
+                                <td class="right"> {{ $item->CALCULO }} </td>
+                            </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
                 <tr>
-                    <td> {{ $item->DESCR_CORTA }} </td>
-                    <td class="right"> {{ $item->CALCULO }} </td>
-                </tr>    
-            @endforeach
+                    <td class="right"><b>{{ $totales["TOT_INGRESOS"] }}</b></td>
+                    <td class="right"><b>{{ $totales["TOT_DESCUENTOS"] }}</b></td>
+                </tr>
+            </tfoot>
         </table>
-
-        <hr>
-        <table class="table-12">
-            <tr>
-                <td>TIEMPOS</td>
-                {{-- <td class="right"><b>{{ $totales["TOT_INGRESOS"] }}</b></td> --}}
-            </tr>
-        </table>
-        <hr>
-        <table class="table-12">
-            @foreach ($tiempos as $item)
+        <table class="table table-8">
+            <thead>
                 <tr>
-                    <td> {{ $item->DESCR_CORTA }} </td>
-                    <td class="right">{{ $item->CALCULO }}</td>
-                </tr>    
-            @endforeach
+                    <th class="content-children-medium">CONTRIBUCIONES DEL EMPLEADOR</th>
+                    <th class="content-children-medium">TIEMPOS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <table>
+                            @foreach ($seguro as $item)
+                                <tr>
+                                    <td> {{ $item->DESCR_CORTA }} </td>
+                                    <td class="right"> {{ $item->CALCULO }} </td>
+                                </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            @foreach ($tiempos as $item)
+                                <tr>
+                                    <td> {{ $item->DESCR_CORTA }} </td>
+                                    <td class="right">{{ $item->CALCULO }}</td>
+                                </tr>    
+                            @endforeach
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="right"><b>{{ isset($totales["TOT_APORT_GRAL"]) ? $totales["TOT_APORT_GRAL"] : 0.00 }}</b></td>
+                    <td></td>
+                </tr>
+            </tfoot>
         </table>
-        <hr>
-        <br>
-        <table class="table-12">
+        <table class="table-8">
             <tr>
                 <td><b>NETO A PAGAR</b></td>
                 <td class="right"><b>{{ $totales["NETO_A_PAGAR"] }}</b></td>
             </tr>
         </table>
-        <br>
-        <br>
-        <table class="center table-12">
-            <tr>
-                <td class="content-children-medium">
-                    <img src="{{ asset('img/jpuga.bmp') }}" alt="" height="120px">
-                </td>
-            </tr>
+        <table class="center table-8">
             <tr>
                 <td>
-                    <h4>FIRMA DEL EMPLEADOR</h4>
+                    <img src="{{ asset('img/jpuga.bmp') }}" alt="" height="100px">
                 </td>
             </tr>
         </table>
+        @if ($horas_semana!=null)
+            <table class="table table-8">
+                <thead>
+                    <tr>
+                        <th>°</th>
+                        <th>L</th>
+                        <th>M</th>
+                        <th>M</th>
+                        <th>J</th>
+                        <th>V</th>
+                        <th>S</th>
+                        <th>D</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Horas</td>
+                        <td>{{ $horas_semana->lunes }}</td>
+                        <td>{{ $horas_semana->martes }}</td>
+                        <td>{{ $horas_semana->miercoles }}</td>
+                        <td>{{ $horas_semana->jueves }}</td>
+                        <td>{{ $horas_semana->viernes }}</td>
+                        <td>{{ $horas_semana->sabado }}</td>
+                        <td>{{ $horas_semana->domingo }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        @endif
     </div>
 </body>
 </html>

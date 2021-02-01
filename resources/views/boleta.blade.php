@@ -5,9 +5,6 @@
     <style>
         table{
             width: 100%;
-            /* display: flex; */
-            /* grid-gap: 0; */
-            /* grid-template-columns: repeat(4, 1fr); */
         }
         .content-children{
             width: 25%;
@@ -43,10 +40,6 @@
         .content-children-medium{
             width: 50%;
         }
-
-        /* .content-children table{
-            width: 100%
-        } */
     </style>
 </head>
 <body>

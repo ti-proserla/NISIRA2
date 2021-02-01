@@ -22,31 +22,37 @@ class BoletasPagoController extends Controller
         }
         $lista=DB::connection($sqlsrv_empresa)
                 ->select(DB::raw("SELECT MP.TIPO tipo,
-                        MP.IDPLANILLA idplanilla,
-                        MIN(MP.PERIODO) min_periodo,
-                        MIN(MP.SEMANA) min_semana,
-                        MAX(MP.PERIODO) max_periodo,
-                        MAX(MP.SEMANA) max_semana,
-                        SUBSTRING(MP.PERIODO, 1, 4) anio,
-                        MAX(CASE 
-                                WHEN PL.TIPO_ENVIO = 'S' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
-                                WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
-                                ELSE SUBSTRING(MP.PERIODO, 5, 2) END)
-                         semana,
-                        RTRIM(PL.TIPO_ENVIO) envio,
-                        CONCAT(MAX(MP.IDMOVIMIENTO),',',MIN(MP.IDMOVIMIENTO)) movimientos,
-                        SUM(M.importemof) monto
-                from movimiento_planilla MP
-                INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
-                INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
-                INNER JOIN COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
-                INNER JOIN MOVCTACTE M ON M.IDEMPRESA=C.IDEMPRESA AND M.IDREFERENCIA=C.IDCOBRARPAGARDOC
-                where IDCODIGOGENERAL = ?
-                AND MP.TIPO='N'
-                AND M.tabla='INGRESOEGRESOCABA' 
-                AND M.factor=-1
-                GROUP BY MP.TIPO, MP.IDPLANILLA, PL.TIPO_ENVIO, SUBSTRING(MP.PERIODO, 1, 4), DATEPART(ISO_WEEK,PP.FECHA_INI)
-                ORDER BY min_periodo DESC, min_semana DESC"),
+                                MP.IDPLANILLA idplanilla,
+                                MIN(MP.SEMANA) min_semana,
+                                MAX(MP.SEMANA) max_semana,
+                                CASE
+                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                                ELSE YEAR(PP.FECHA_INI) END anio,
+                                MAX(CASE 
+                                        WHEN PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                        WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
+                                        ELSE SUBSTRING(MP.PERIODO, 5, 2) END)
+                                semana,
+                                RTRIM(CASE 
+                                        WHEN PL.TIPO_ENVIO = 'N'
+                                        THEN 'S' ELSE PL.TIPO_ENVIO end) envio,
+                                CONCAT(MAX(MP.IDMOVIMIENTO),',',MIN(MP.IDMOVIMIENTO)) movimientos,
+                                SUM(M.importemof) monto
+                        from movimiento_planilla MP
+                        INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
+                        INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
+                        INNER JOIN COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
+                        INNER JOIN MOVCTACTE M ON M.IDEMPRESA=C.IDEMPRESA AND M.IDREFERENCIA=C.IDCOBRARPAGARDOC
+                        where IDCODIGOGENERAL = ?
+                        AND MP.TIPO='N'
+                        AND M.tabla='INGRESOEGRESOCABA' 
+                        AND M.factor=-1
+                        GROUP BY MP.TIPO, MP.IDPLANILLA, PL.TIPO_ENVIO, CASE
+                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                        ELSE YEAR(PP.FECHA_INI) END, DATEPART(ISO_WEEK,PP.FECHA_INI)
+                        ORDER BY anio DESC, semana DESC"),
                 [$codigo]);
         return response()->json($lista);
     }
@@ -159,21 +165,48 @@ class BoletasPagoController extends Controller
 
         $periodo=DB::connection($sqlsrv_empresa)
                 ->select("SELECT 
-                                        MP.IDCODIGOGENERAL,
-                                        RTRIM(PL.TIPO_ENVIO) ENVIO,
-                                        SUBSTRING(MP.PERIODO, 1, 4) anio,
-                                        MAX(CASE 
-                                                WHEN PL.TIPO_ENVIO = 'S' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
-                                                WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
-                                                ELSE SUBSTRING(MP.PERIODO, 5, 2) END) semana,
-                                        FORMAT(MIN(PP.FECHA_INI),'dd/MM/yyyy') FECHA_INI, 
-                                        FORMAT(MAX(PP.FECHA_FIN),'dd/MM/yyyy') FECHA_FIN 
-                                FROM MOVIMIENTO_PLANILLA MP
-                                INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
-                                INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA = MP.SEMANA
-                                where idmovimiento IN ($sCodigo)
-                                GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO,SUBSTRING(MP.PERIODO, 1, 4)",
+                        MP.IDCODIGOGENERAL,
+                        CASE WHEN PL.TIPO_ENVIO='N' THEN 'S' ELSE RTRIM(PL.TIPO_ENVIO) END ENVIO,
+                        CASE
+                                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                        ELSE YEAR(PP.FECHA_INI) END anio,
+                        MAX(CASE 
+                                WHEN PL.TIPO_ENVIO = 'S' OR  PL.TIPO_ENVIO = 'N' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
+                                ELSE SUBSTRING(MP.PERIODO, 5, 2) END) semana,
+                        MIN(FECHA_INI) FECHA_INI_N, 
+                        MAX(FECHA_FIN) FECHA_FIN_N, 
+                        FORMAT(MIN(PP.FECHA_INI),'dd/MM/yyyy') FECHA_INI, 
+                        FORMAT(MAX(PP.FECHA_FIN),'dd/MM/yyyy') FECHA_FIN 
+                FROM MOVIMIENTO_PLANILLA MP
+                INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
+                INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA = MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
+                where idmovimiento IN ($sCodigo)
+                GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO, CASE
+                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                            WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                ELSE YEAR(PP.FECHA_INI) END",
                         $arrayCodigos)[0];
+        
+        $horas_semana=DB::connection($sqlsrv_empresa)
+                ->select("SELECT IDCODIGOGENERAL, 
+                        SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =1 then TOTAL_HORAS else 0 end ) as lunes,
+                        SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =2 then TOTAL_HORAS else 0 end ) as martes,
+                        SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =3 then TOTAL_HORAS else 0 end ) as miercoles,
+                        SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =4 then TOTAL_HORAS else 0 end ) as jueves,
+                        SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =5 then TOTAL_HORAS else 0 end ) as viernes,
+                        SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =6 then TOTAL_HORAS else 0 end ) as sabado,
+                        SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =7 then TOTAL_HORAS else 0 end ) as domingo
+                FROM DET_ASISTENCIA
+                WHERE FECHACREACION >= ?
+                AND FECHACREACION <= ?
+                AND IDCODIGOGENERAL = ?
+                GROUP BY IDCODIGOGENERAL",[
+                        $periodo->FECHA_INI_N,
+                        $periodo->FECHA_FIN_N,
+                        $datos->CODIGO
+                ]);
      
         $lista=[
                 "empresa"=> $empresa,
@@ -183,7 +216,8 @@ class BoletasPagoController extends Controller
                 "seguro" => $seguro,
                 "tiempos" => $tiempos,
                 "totales" => $totales,
-                "periodo" => $periodo
+                "periodo" => $periodo,
+                "horas_semana" => ($horas_semana==null) ? $horas_semana : $horas_semana[0]
         ];
 
         if ($request->has('data')) {
