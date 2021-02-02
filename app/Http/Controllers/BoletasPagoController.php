@@ -232,4 +232,211 @@ class BoletasPagoController extends Controller
         return PDF::loadView('boleta', $lista)
                 ->download('boleta_pago.pdf');
     }
+
+        //Comprobacion de existencia y no duplicidad de las boletas
+        public function modulo_cajero(Request $request){
+                $codigo_personal=$request->codigo_personal;
+
+                if ($request->empresa=='01') {
+                        $sqlsrv_empresa="sqlsrv_proserla";
+                        $empresa= [
+                                "nombre_empresa" => "PROMOTORA Y SERVICIOS LAMBAYEQUE SAC",
+                                "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
+                                ",
+                                "ruc" => "20479813877"
+                        ]; 
+                }
+                if ($request->empresa=='02') {
+                        $sqlsrv_empresa="sqlsrv_jayanca";
+                        $empresa= [
+                                "nombre_empresa" => "JAYANCA FRUITS S.A.C.",
+                                "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
+                                ",
+                                "ruc" => "20561338281"
+                        ]; 
+                }
+                $encontrado=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT top 1	MP.IDPLANILLA idplanilla,
+                                        CASE
+                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                                ELSE YEAR(PP.FECHA_INI) END anio,
+                                        MAX(CASE 
+                                                WHEN PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                                WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
+                                                ELSE SUBSTRING(MP.PERIODO, 5, 2) END)
+                                        semana,
+                                        RTRIM(CASE 
+                                                WHEN PL.TIPO_ENVIO = 'N'
+                                                THEN 'S' ELSE PL.TIPO_ENVIO end) envio,
+                                        CONCAT(MAX(MP.IDMOVIMIENTO),',',MIN(MP.IDMOVIMIENTO)) movimientos
+                                FROM movimiento_planilla MP
+                                INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
+                                INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
+                                INNER JOIN COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
+                                where IDCODIGOGENERAL = ?
+                                AND MP.TIPO='N'
+                                AND CERRADO='C'
+                                GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO, CASE
+                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                ELSE YEAR(PP.FECHA_INI) END, DATEPART(ISO_WEEK,PP.FECHA_INI)
+                                ORDER BY anio DESC, semana DESC",[$codigo_personal]);
+
+                if ($encontrado!=null) {
+                        
+                }else{
+                        return response()->json([
+                                "status"=> "error",
+                                "message"=> "No se encontro Boleta disponible"
+                        ]);
+                }
+                dd($encontrado);
+
+        }
+
+        /**
+         * @var codigo idmovimientos separados por "," 
+         * @var sqlsrv_empresa
+         */
+        public function getData($codigos,$sqlsrv_empresa){
+                //sueldo
+                $datos=DB::connection($sqlsrv_empresa)
+                        ->select(
+                        "SELECT TOP 1
+                                PG.IDCODIGOGENERAL CODIGO,
+                                CASE WHEN MP.IDAFP is NULL  THEN 'O.N.P' ELSE  A.DESCRIPCION END 
+                                SPP,
+                                CASE WHEN MP.IDAFP is NULL  THEN '-' ELSE PG.AUTOGENERADOAFP END 
+                                COD_SPP,
+                                FORMAT(PE.FECHA_INICIOPLANILLA,'dd/MM/yyyy') INICIO_PLANILLA,
+                                PG.A_MATERNO,
+                                PG.A_PATERNO,
+                                PG.NOMBRES, 
+                                D.VALOR BASICO, 
+                                C.DESCR_CORTA, 
+                                C.IDTIPOCONCEPTO, 
+                                C.ORDEN 
+                        FROM deta_movimiento_planilla D
+                        INNER JOIN MOVIMIENTO_PLANILLA MP ON MP.IDMOVIMIENTO= D.IDMOVIMIENTO
+                        INNER JOIN PERSONAL_GENERAL PG ON PG.IDCODIGOGENERAL=MP.IDCODIGOGENERAL
+                        INNER JOIN PERSONAL PE ON PE.IDCODIGOGENERAL=MP.IDCODIGOGENERAL
+                        INNER JOIN CONCEPTOS C ON C.IDCONCEPTO = D.IDCONCEPTO
+                        LEFT JOIN AFPS A ON A.IDAFP=MP.IDAFP
+                        WHERE MP.idmovimiento IN ($sCodigo)
+                        AND C.DESCR_CORTA='BASICO'
+                        AND IDTIPOCONCEPTO='IN'
+                        -- AND MP.fecha_proceso > PE.FECHA_INICIOPLANILLA
+                        ORDER BY FECHA_INICIOPLANILLA DESC",
+                        $arrayCodigos)[0];
+                //REMUNERACIONES
+                $ingresos=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT SUM(D.CALCULO) CALCULO, C.DESCR_CORTA, C.IDTIPOCONCEPTO 
+                        from deta_movimiento_planilla D
+                        INNER JOIN CONCEPTOS C ON C.IDCONCEPTO = D.IDCONCEPTO
+                        WHERE idmovimiento IN ($sCodigo)
+                        AND IDTIPOCONCEPTO='IN'
+                        GROUP BY C.DESCR_CORTA, D.IDCONCEPTO, C.IDTIPOCONCEPTO
+                        ORDER BY D.IDCONCEPTO ASC",
+                        $arrayCodigos);
+                //DESCUENTOS
+                $descuentos=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT SUM(D.CALCULO) CALCULO, C.DESCR_CORTA, C.IDTIPOCONCEPTO from deta_movimiento_planilla D
+                        INNER JOIN CONCEPTOS C ON C.IDCONCEPTO = D.IDCONCEPTO
+                        WHERE idmovimiento IN ($sCodigo)
+                        AND IDTIPOCONCEPTO='DE'
+                        GROUP BY C.DESCR_CORTA, D.IDCONCEPTO, C.IDTIPOCONCEPTO
+                        ORDER BY D.IDCONCEPTO ASC",
+                        $arrayCodigos);
+                //SEGURO
+                $seguro=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT SUM(D.CALCULO) CALCULO, C.DESCR_CORTA, C.IDTIPOCONCEPTO from deta_movimiento_planilla D
+                        INNER JOIN CONCEPTOS C ON C.IDCONCEPTO = D.IDCONCEPTO
+                        WHERE idmovimiento IN ($sCodigo)
+                        AND IDTIPOCONCEPTO='AE'
+                        GROUP BY C.DESCR_CORTA, D.IDCONCEPTO, C.IDTIPOCONCEPTO
+                        ORDER BY D.IDCONCEPTO ASC",
+                        $arrayCodigos);
+                //tiempos
+                $tiempos=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT SUM(D.CALCULO) CALCULO, C.DESCR_CORTA, C.IDTIPOCONCEPTO from deta_movimiento_planilla D
+                        INNER JOIN CONCEPTOS C ON C.IDCONCEPTO = D.IDCONCEPTO
+                        WHERE idmovimiento IN ($sCodigo)
+                        AND IDTIPOCONCEPTO='TI'
+                        GROUP BY C.DESCR_CORTA, D.IDCONCEPTO, C.IDTIPOCONCEPTO
+                        ORDER BY D.IDCONCEPTO ASC",
+                        $arrayCodigos);
+                //totales
+                $temp_totales=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT SUM(D.CALCULO) CALCULO, 
+                                        C.DESCR_CORTA, 
+                                        C.IDTIPOCONCEPTO 
+                        FROM deta_movimiento_planilla D
+                        INNER JOIN CONCEPTOS C ON C.IDCONCEPTO = D.IDCONCEPTO
+                        WHERE idmovimiento IN ($sCodigo)
+                        AND IDTIPOCONCEPTO='TO'
+                        GROUP BY C.DESCR_CORTA, D.IDCONCEPTO, C.IDTIPOCONCEPTO
+                        ORDER BY D.IDCONCEPTO ASC",
+                        $arrayCodigos);
+                $totales=[];
+                foreach($temp_totales as $total){
+                        $totales[str_replace(' ','_',$total->DESCR_CORTA)]=$total->CALCULO;
+                }
+
+                $periodo=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT 
+                                MP.IDCODIGOGENERAL,
+                                CASE WHEN PL.TIPO_ENVIO='N' THEN 'S' ELSE RTRIM(PL.TIPO_ENVIO) END ENVIO,
+                                CASE
+                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                                ELSE YEAR(PP.FECHA_INI) END anio,
+                                MAX(CASE 
+                                        WHEN PL.TIPO_ENVIO = 'S' OR  PL.TIPO_ENVIO = 'N' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                        WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
+                                        ELSE SUBSTRING(MP.PERIODO, 5, 2) END) semana,
+                                MIN(FECHA_INI) FECHA_INI_N, 
+                                MAX(FECHA_FIN) FECHA_FIN_N, 
+                                FORMAT(MIN(PP.FECHA_INI),'dd/MM/yyyy') FECHA_INI, 
+                                FORMAT(MAX(PP.FECHA_FIN),'dd/MM/yyyy') FECHA_FIN 
+                        FROM MOVIMIENTO_PLANILLA MP
+                        INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
+                        INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA = MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
+                        where idmovimiento IN ($sCodigo)
+                        GROUP BY MP.IDCODIGOGENERAL,PL.TIPO_ENVIO, CASE
+                                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                        ELSE YEAR(PP.FECHA_INI) END",
+                                $arrayCodigos)[0];
+
+                $horas_semana=DB::connection($sqlsrv_empresa)
+                        ->select("SELECT IDCODIGOGENERAL, 
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =1 then TOTAL_HORAS else 0 end ) as lunes,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =2 then TOTAL_HORAS else 0 end ) as martes,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =3 then TOTAL_HORAS else 0 end ) as miercoles,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =4 then TOTAL_HORAS else 0 end ) as jueves,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =5 then TOTAL_HORAS else 0 end ) as viernes,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =6 then TOTAL_HORAS else 0 end ) as sabado,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =7 then TOTAL_HORAS else 0 end ) as domingo
+                        FROM DET_ASISTENCIA
+                        WHERE FECHACREACION >= ?
+                        AND FECHACREACION <= ?
+                        AND IDCODIGOGENERAL = ?
+                        GROUP BY IDCODIGOGENERAL",[
+                                $periodo->FECHA_INI_N,
+                                $periodo->FECHA_FIN_N,
+                                $datos->CODIGO
+                        ]);
+                return response()->json([
+                                "empresa"=> $empresa,
+                                "datos"=> $datos,
+                                "ingresos" => $ingresos,
+                                "descuentos" => $descuentos,
+                                "seguro" => $seguro,
+                                "tiempos" => $tiempos,
+                                "totales" => $totales,
+                                "periodo" => $periodo,
+                                "horas_semana" => ($horas_semana==null) ? $horas_semana : $horas_semana[0]
+                        ]);
+        }
 }

@@ -21,6 +21,7 @@ Route::group(['middleware' => ['cors']], function () {
     Route::resource('cuenta_trabajador', 'CuentaTrabajadorController');
     Route::post('bp/boletas','BoletasPagoController@index');
     Route::get('bp/boletas/show','BoletasPagoController@show');
+    Route::get('bp/boletas/modulo_cajero','BoletasPagoController@modulo_cajero');
 
     // if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     //     header('Access-Control-Allow-Methods: GET, POST, DELETE');
