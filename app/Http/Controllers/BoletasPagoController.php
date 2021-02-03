@@ -281,7 +281,7 @@ class BoletasPagoController extends Controller
                                 WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
                                 WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
                                 ELSE YEAR(PP.FECHA_INI) END, DATEPART(ISO_WEEK,PP.FECHA_INI)
-                                ORDER BY anio DESC, semana DESC",[$codigo_personal]);
+                                ORDER BY anio DESC, semana DESC",[$codigo_personal])[0];
 
                 if ($encontrado!=null) {
                         
@@ -291,7 +291,11 @@ class BoletasPagoController extends Controller
                                 "message"=> "No se encontro Boleta disponible"
                         ]);
                 }
-                dd($encontrado);
+                dd(
+                        $this->getData($encontrado->movimientos,$sqlsrv_empresa)
+                );
+                // dd($encontrado->movimientos);
+
 
         }
 
@@ -300,6 +304,9 @@ class BoletasPagoController extends Controller
          * @var sqlsrv_empresa
          */
         public function getData($codigos,$sqlsrv_empresa){
+                $arrayCodigos=explode(',',$codigos);
+                $sCodigo= (count($arrayCodigos)==1) ? "?" : "?,?" ;    
+
                 //sueldo
                 $datos=DB::connection($sqlsrv_empresa)
                         ->select(
@@ -427,8 +434,8 @@ class BoletasPagoController extends Controller
                                 $periodo->FECHA_FIN_N,
                                 $datos->CODIGO
                         ]);
-                return response()->json([
-                                "empresa"=> $empresa,
+                return [
+                                // "empresa"=> $empresa,
                                 "datos"=> $datos,
                                 "ingresos" => $ingresos,
                                 "descuentos" => $descuentos,
@@ -437,6 +444,6 @@ class BoletasPagoController extends Controller
                                 "totales" => $totales,
                                 "periodo" => $periodo,
                                 "horas_semana" => ($horas_semana==null) ? $horas_semana : $horas_semana[0]
-                        ]);
+                        ];
         }
 }
