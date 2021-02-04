@@ -284,16 +284,13 @@ class BoletasPagoController extends Controller
                                 ORDER BY anio DESC, semana DESC",[$codigo_personal])[0];
 
                 if ($encontrado!=null) {
-                        
+                        return view('boleta_termica',$this->getData($encontrado->movimientos,$request->empresa));
                 }else{
                         return response()->json([
                                 "status"=> "error",
                                 "message"=> "No se encontro Boleta disponible"
                         ]);
                 }
-                dd(
-                        $this->getData($encontrado->movimientos,$sqlsrv_empresa)
-                );
                 // dd($encontrado->movimientos);
 
 
@@ -303,7 +300,28 @@ class BoletasPagoController extends Controller
          * @var codigo idmovimientos separados por "," 
          * @var sqlsrv_empresa
          */
-        public function getData($codigos,$sqlsrv_empresa){
+        public function getData($codigos,$cod_empresa){
+
+                if ($cod_empresa=='01') {
+                        $sqlsrv_empresa="sqlsrv_proserla";
+                        $empresa= [
+                                "nombre_empresa" => "PROMOTORA Y SERVICIOS LAMBAYEQUE SAC",
+                                "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
+                                ",
+                                "ruc" => "20479813877"
+                        ]; 
+                }
+                if ($cod_empresa=='02') {
+                        $sqlsrv_empresa="sqlsrv_jayanca";
+                        $empresa= [
+                                "nombre_empresa" => "JAYANCA FRUITS S.A.C.",
+                                "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
+                                ",
+                                "ruc" => "20561338281"
+                        ]; 
+                }
+
+
                 $arrayCodigos=explode(',',$codigos);
                 $sCodigo= (count($arrayCodigos)==1) ? "?" : "?,?" ;    
 
@@ -435,7 +453,7 @@ class BoletasPagoController extends Controller
                                 $datos->CODIGO
                         ]);
                 return [
-                                // "empresa"=> $empresa,
+                                "empresa"=> $empresa,
                                 "datos"=> $datos,
                                 "ingresos" => $ingresos,
                                 "descuentos" => $descuentos,

@@ -195,7 +195,7 @@
                 </td>
             </tr>
         </table>
-        @if ($horas_semana!=null)
+        @if ($horas_semana!=null&&$periodo->ENVIO == 'S')
             <table class="table table-8">
                 <thead>
                     <tr>
