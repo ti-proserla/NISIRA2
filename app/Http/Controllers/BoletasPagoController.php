@@ -284,17 +284,17 @@ class BoletasPagoController extends Controller
                                 ORDER BY anio DESC, semana DESC",[$codigo_personal])[0];
 
                 if ($encontrado!=null) {
-                        $historial=HistorialDescargas::where('codigos',$encontrado->movimientos)->first();
-                        if ($historial!=null) {
-                                return response()->json([
-                                        "status"=>"error",
-                                        "message"=>"La boleta ya fue impresa."
-                                ], 500);
-                        }
-                        $historialDescargas=new HistorialDescargas();
-                        $historialDescargas->codigos=$encontrado->movimientos;
-                        $historialDescargas->codigo_personal=$codigo_personal;
-                        $historialDescargas->save();
+                        // $historial=HistorialDescargas::where('codigos',$encontrado->movimientos)->first();
+                        // if ($historial!=null) {
+                        //         return response()->json([
+                        //                 "status"=>"error",
+                        //                 "message"=>"La boleta ya fue impresa."
+                        //         ]);
+                        // }
+                        // $historialDescargas=new HistorialDescargas();
+                        // $historialDescargas->codigos=$encontrado->movimientos;
+                        // $historialDescargas->codigo_personal=$codigo_personal;
+                        // $historialDescargas->save();
                         return view('boleta_termica',$this->getData($encontrado->movimientos,$request->empresa));
                 }else{
                         return response()->json([

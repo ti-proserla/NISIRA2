@@ -2,64 +2,7 @@
 <html lang="es">
 <head>
     <title>BOLETA DE REMUNERACIONES</title>
-    <style>
-        table{
-            width: 100%;
-        }
-        .content-children{
-            width: 25%;
-        }
-        .center{
-            text-align: center
-        }
-        .right{
-            text-align: right;
-        }
-        table{
-            border-collapse: collapse;
-            margin-bottom: 5px
-        }
-        .table-8{
-            font-size: 8px;
-        }
-        .table-10{
-            font-size: 10px;
-        }
-        .table-12{
-            font-size: 12px;
-        }
-        .table-14{
-            font-size: 14px;
-        }
-        .table>tbody>tr>td{
-            vertical-align: top
-        }
-        h1,h2,h3,h4,h5,h6{
-            width: 100%;
-            margin: 0;
-            font-weight: 400;
-            margin-bottom: 4px
-        }
-        h5{
-            font-size: 9px
-        }
-        h6{
-            font-size: 8px
-        }
-        .content-children-medium{
-            width: 50%;
-        }
-        .boleta{
-            width: 310px
-        }
-        .pl-3{
-            padding-left: 1rem;
-        }
-        .table>tbody>tr>td,.table>thead>tr>th,.table>tfoot>tr>td{
-            padding: 5px;
-            border: 1px solid #888;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/boleta-termica.css') }}">
 </head>
 <body>
     <div class="boleta">
