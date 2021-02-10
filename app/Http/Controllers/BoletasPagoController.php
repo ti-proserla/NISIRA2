@@ -284,17 +284,17 @@ class BoletasPagoController extends Controller
                                 ORDER BY anio DESC, semana DESC",[$codigo_personal])[0];
 
                 if ($encontrado!=null) {
-                        // $historial=HistorialDescargas::where('codigos',$encontrado->movimientos)->first();
-                        // if ($historial!=null) {
-                        //         return response()->json([
-                        //                 "status"=>"error",
-                        //                 "message"=>"La boleta ya fue impresa."
-                        //         ]);
-                        // }
-                        // $historialDescargas=new HistorialDescargas();
-                        // $historialDescargas->codigos=$encontrado->movimientos;
-                        // $historialDescargas->codigo_personal=$codigo_personal;
-                        // $historialDescargas->save();
+                        $historial=HistorialDescargas::where('codigos',$encontrado->movimientos)->first();
+                        if ($historial!=null) {
+                                return response()->json([
+                                        "status"=>"error",
+                                        "message"=>"La boleta ya fue impresa."
+                                ]);
+                        }
+                        $historialDescargas=new HistorialDescargas();
+                        $historialDescargas->codigos=$encontrado->movimientos;
+                        $historialDescargas->codigo_personal=$codigo_personal;
+                        $historialDescargas->save();
                         return view('boleta_termica',$this->getData($encontrado->movimientos,$request->empresa));
                 }else{
                         return response()->json([
@@ -453,7 +453,8 @@ class BoletasPagoController extends Controller
                                 SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =4 then TOTAL_HORAS else 0 end ) as jueves,
                                 SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =5 then TOTAL_HORAS else 0 end ) as viernes,
                                 SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =6 then TOTAL_HORAS else 0 end ) as sabado,
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =7 then TOTAL_HORAS else 0 end ) as domingo
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION )-1 =7 then TOTAL_HORAS else 0 end ) as domingo,
+                                SUM(TOTAL_HORAS) total
                         FROM DET_ASISTENCIA
                         WHERE FECHACREACION >= ?
                         AND FECHACREACION <= ?

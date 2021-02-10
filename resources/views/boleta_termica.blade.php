@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <title>BOLETA DE REMUNERACIONES</title>
-    <link rel="stylesheet" href="{{ asset('css/boleta-termica.css') }}">
-</head>
+<head><title>BOLETA DE REMUNERACIONES</title><link rel="stylesheet" href="{{ asset('css/boleta-termica.css') }}"></head>
 <body>
     <div class="boleta">
         <table>
@@ -133,28 +130,18 @@
         </table>
         <table class="center table-8">
             <tr>
-                <td>
-                    <img src="{{ asset('img/jpuga.bmp') }}" alt="" height="100px">
-                </td>
+                <td><img src="{{ asset('img/jpuga.bmp') }}" alt="" height="100px"></td>
             </tr>
         </table>
         @if ($horas_semana!=null&&$periodo->ENVIO == 'S')
             <table class="table table-8">
                 <thead>
                     <tr>
-                        <th>°</th>
-                        <th>L</th>
-                        <th>M</th>
-                        <th>M</th>
-                        <th>J</th>
-                        <th>V</th>
-                        <th>S</th>
-                        <th>D</th>
+                        <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th><th>TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Horas</td>
                         <td>{{ $horas_semana->lunes }}</td>
                         <td>{{ $horas_semana->martes }}</td>
                         <td>{{ $horas_semana->miercoles }}</td>
@@ -162,6 +149,7 @@
                         <td>{{ $horas_semana->viernes }}</td>
                         <td>{{ $horas_semana->sabado }}</td>
                         <td>{{ $horas_semana->domingo }}</td>
+                        <td>{{ $horas_semana->total }}</td>
                     </tr>
                 </tbody>
             </table>
