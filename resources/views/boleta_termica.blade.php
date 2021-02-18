@@ -38,6 +38,12 @@
                 <td><b>CUSPP</b></td>
                 <td>{{ $datos->COD_SPP }}</td>
             </tr>
+            <tr>
+                <td><b>Banco</b></td>
+                <td>{{ $datos->IDBANCO }}</td>
+                <td><b>N° Cuenta</b></td>
+                <td>{{ $datos->CUENTA_BANCO }}</td>
+            </tr>
         </table>
         <table class="table table-8">
             <thead>

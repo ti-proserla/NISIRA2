@@ -356,7 +356,9 @@ class BoletasPagoController extends Controller
                                 PG.NOMBRES, 
                                 D.VALOR BASICO, 
                                 C.DESCR_CORTA, 
-                                C.IDTIPOCONCEPTO, 
+                                C.IDTIPOCONCEPTO,
+                                PG.IDBANCO,
+                                PG.CUENTA_BANCO, 
                                 C.ORDEN 
                         FROM deta_movimiento_planilla D
                         INNER JOIN MOVIMIENTO_PLANILLA MP ON MP.IDMOVIMIENTO= D.IDMOVIMIENTO
