@@ -243,7 +243,8 @@ class BoletasPagoController extends Controller
                                 "nombre_empresa" => "PROMOTORA Y SERVICIOS LAMBAYEQUE SAC",
                                 "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
                                 ",
-                                "ruc" => "20479813877"
+                                "ruc" => "20479813877",
+                                "logo"=> "logo.png"
                         ]; 
                 }
                 if ($request->empresa=='02') {
@@ -252,7 +253,8 @@ class BoletasPagoController extends Controller
                                 "nombre_empresa" => "JAYANCA FRUITS S.A.C.",
                                 "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
                                 ",
-                                "ruc" => "20561338281"
+                                "ruc" => "20561338281",
+                                "logo"=> "jayanca.png"
                         ]; 
                 }
                 $encontrado=DB::connection($sqlsrv_empresa)
@@ -281,8 +283,8 @@ class BoletasPagoController extends Controller
                                 WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
                                 WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
                                 ELSE YEAR(PP.FECHA_INI) END, DATEPART(ISO_WEEK,PP.FECHA_INI)
-                                ORDER BY anio DESC, semana DESC",[$codigo_personal])[0];
-
+                                ORDER BY anio DESC, semana DESC",[$codigo_personal]);
+                $encontrado=(count($encontrado)>0) ? $encontrado[0] : null;
                 if ($encontrado!=null) {
                         $historial=HistorialDescargas::where('codigos',$encontrado->movimientos)->first();
                         if ($historial!=null) {
@@ -295,6 +297,7 @@ class BoletasPagoController extends Controller
                         $historialDescargas->codigos=$encontrado->movimientos;
                         $historialDescargas->codigo_personal=$codigo_personal;
                         $historialDescargas->save();
+                        // return response()->json($this->getData($encontrado->movimientos,$request->empresa));
                         return view('boleta_termica',$this->getData($encontrado->movimientos,$request->empresa));
                 }else{
                         return response()->json([
@@ -319,7 +322,8 @@ class BoletasPagoController extends Controller
                                 "nombre_empresa" => "PROMOTORA Y SERVICIOS LAMBAYEQUE SAC",
                                 "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
                                 ",
-                                "ruc" => "20479813877"
+                                "ruc" => "20479813877",
+                                "logo"=> "logo.png"
                         ]; 
                 }
                 if ($cod_empresa=='02') {
@@ -328,7 +332,8 @@ class BoletasPagoController extends Controller
                                 "nombre_empresa" => "JAYANCA FRUITS S.A.C.",
                                 "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
                                 ",
-                                "ruc" => "20561338281"
+                                "ruc" => "20561338281",
+                                "logo"=> "jayanca.png"
                         ]; 
                 }
 

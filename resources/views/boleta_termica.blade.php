@@ -6,43 +6,36 @@
         <table>
             <tr>
                 <td class="center">
-                    {{-- <img src="{{ asset('img/logotipo.png') }}" alt="" width="110px"> --}}
+                    <img src="{{ asset('img/'.$empresa['logo']) }}" alt="" height="80px">
                 </td>
             </tr>
             <tr>
                 <td class="content-children-medium">
                     <h5 class="center"><b>{{ $empresa['nombre_empresa'] }}</b></h5>
-                    <h6 class="center">RUC: {{ $empresa['ruc'] }}</h6>
-                    <h6 class="center">{{ $empresa['direccion'] }}</h6>
+                    <h6 class="center"><b>RUC: {{ $empresa['ruc'] }}</b></h6>
                 </td>
             </tr>
         </table>
+        <h4 class="center"><b>BOLETA DE REMUNERACIONES</b></h4>
+        <h5 class="center"><b>AÑO</b> {{ $periodo->anio }} <b>{{ ($periodo->ENVIO == 'S' ? 'SEMANA': ($periodo->ENVIO == 'Q' ? 'QUINCENA': 'MES') ) }}</b> {{ $periodo->semana }} <b>PERIODO</b> {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }}</h5>
         <hr>
-        <h5 class="center"><b>BOLETA DE REMUNERACIONES</b></h5>
-        <h5 class="center"> {{ ($periodo->ENVIO == 'S' ? 'SEMANA': ($periodo->ENVIO == 'Q' ? 'QUINCENA': 'MES') ) }} {{ $periodo->semana }}  ( {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }} ) </h5>
         <table class="table-8">
             <tr>
-                <td>Trabajador:</td>
+                <td><b>Trabajador</b></td>
                 <td>{{ $datos->A_PATERNO.' '.$datos->A_MATERNO.', '.$datos->NOMBRES }}</td>
-            </tr>
-            <tr>
-                <td>Sueldo:</td>
+                <td><b>Sueldo</b></td>
                 <td>{{ $datos->BASICO }}</td>
             </tr>
             <tr>
-                <td>Fec.Ingreso:</td>
-                <td>{{ $datos->INICIO_PLANILLA }}</td>
-            </tr>
-            <tr>
-                <td>SPP:</td>
+                <td><b>D.N.I.</b></td>
+                <td>{{ $datos->CODIGO }}</td>
+                <td><b>SPP</b></td>
                 <td>{{ $datos->SPP }}</td>
             </tr>
             <tr>
-                <td>D.N.I.:</td>
-                <td>{{ $datos->CODIGO }}</td>
-            </tr>
-            <tr>        
-                <td>CUSPP:</td>
+                <td><b>Fec.Ingreso</b></td>
+                <td>{{ $datos->INICIO_PLANILLA }}</td>
+                <td><b>CUSPP</b></td>
                 <td>{{ $datos->COD_SPP }}</td>
             </tr>
         </table>
@@ -122,10 +115,9 @@
                 </tr>
             </tfoot>
         </table>
-        <table class="table-8">
+        <table class="table-9">
             <tr>
-                <td><b>NETO A PAGAR</b></td>
-                <td class="right"><b>{{ $totales["NETO_A_PAGAR"] }}</b></td>
+                <td class="right"><b>NETO A PAGAR {{ $totales["NETO_A_PAGAR"] }}</b></td>
             </tr>
         </table>
         <table class="center table-8">
@@ -142,18 +134,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ $horas_semana->lunes }}</td>
-                        <td>{{ $horas_semana->martes }}</td>
-                        <td>{{ $horas_semana->miercoles }}</td>
-                        <td>{{ $horas_semana->jueves }}</td>
-                        <td>{{ $horas_semana->viernes }}</td>
-                        <td>{{ $horas_semana->sabado }}</td>
-                        <td>{{ $horas_semana->domingo }}</td>
-                        <td>{{ $horas_semana->total }}</td>
-                    </tr>
+                        <td>{{ $horas_semana->lunes }}</td><td>{{ $horas_semana->martes }}</td><td>{{ $horas_semana->miercoles }}</td><td>{{ $horas_semana->jueves }}</td><td>{{ $horas_semana->viernes }}</td><td>{{ $horas_semana->sabado }}</td><td>{{ $horas_semana->domingo }}</td><td>{{ $horas_semana->total }}</td></tr>
                 </tbody>
             </table>
         @endif
+        <h6 class="center">{{ $empresa['direccion'] }}</h6>
     </div>
 </body>
 </html>
