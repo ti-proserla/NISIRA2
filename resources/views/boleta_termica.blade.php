@@ -65,7 +65,7 @@
                         </table>
                     </td>
                     <td>
-                        <table class="table-8">
+                        <table class="table-10">
                             @foreach ($descuentos as $item)
                             <tr>
                                 <td> {{ $item->DESCR_CORTA }} </td>
@@ -83,7 +83,7 @@
                 </tr>
             </tfoot>
         </table>
-        <table class="table table-8">
+        <table class="table table-10">
             <thead>
                 <tr>
                     <th class="content-children-medium">CONTRIBUCIONES DEL EMPLEADOR</th>
@@ -126,13 +126,13 @@
                 <td class="right"><b>NETO A PAGAR {{ $totales["NETO_A_PAGAR"] }}</b></td>
             </tr>
         </table>
-        <table class="center table-8">
+        <table class="center table-10">
             <tr>
                 <td><img src="{{ asset('img/jpuga.bmp') }}" alt="" height="100px"></td>
             </tr>
         </table>
         @if ($horas_semana!=null&&$periodo->ENVIO == 'S')
-            <table class="table table-8">
+            <table class="table table-10">
                 <thead>
                     <tr>
                         <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th><th>TOTAL</th>
