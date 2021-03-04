@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><title>BOLETA DE REMUNERACIONES</title><style>*{font-family: "Courier New", Courier, monospace}</style><link rel="stylesheet" href="{{ asset('css/boleta-termica.css') }}"></head>
+<head><title>BOLETA DE REMUNERACIONES</title><style>*{font-family: Verdana, Arial, Helvetica, sans-serif}</style><link rel="stylesheet" href="{{ asset('css/boleta-termica.css') }}"></head>
 <body>
     <div class="boleta">
         <table>
