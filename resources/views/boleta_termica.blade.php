@@ -19,7 +19,7 @@
         <h4 class="center"><b>BOLETA DE REMUNERACIONES</b></h4>
         <h5 class="center"><b>AÑO</b> {{ $periodo->anio }} <b>{{ ($periodo->ENVIO == 'S' ? 'SEMANA': ($periodo->ENVIO == 'Q' ? 'QUINCENA': 'MES') ) }}</b> {{ $periodo->semana }} <b>PERIODO</b> {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }}</h5>
         <hr>
-        <table class="table-8">
+        <table class="table-10">
             <tr>
                 <td><b>Trabajador</b></td>
                 <td>{{ $datos->A_PATERNO.' '.$datos->A_MATERNO.', '.$datos->NOMBRES }}</td>
@@ -45,7 +45,7 @@
                 <td>{{ $datos->CUENTA_BANCO }}</td>
             </tr>
         </table>
-        <table class="table table-8">
+        <table class="table table-10">
             <thead>
                 <tr>
                     <th class="content-children-medium">REMUNERACIONES</th>
