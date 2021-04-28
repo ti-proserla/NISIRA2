@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><title>BOLETA DE REMUNERACIONES</title><link rel="stylesheet" href="{{ asset('css/boleta-termica.css') }}"></head>
+<head><title>BOLETA DE REMUNERACIONES</title><style>*{font-family: Verdana, Arial, Helvetica, sans-serif}</style><link rel="stylesheet" href="{{ asset('css/boleta-termica.css') }}"></head>
 <body>
     <div class="boleta">
         <table>
@@ -19,7 +19,7 @@
         <h4 class="center"><b>BOLETA DE REMUNERACIONES</b></h4>
         <h5 class="center"><b>AÑO</b> {{ $periodo->anio }} <b>{{ ($periodo->ENVIO == 'S' ? 'SEMANA': ($periodo->ENVIO == 'Q' ? 'QUINCENA': 'MES') ) }}</b> {{ $periodo->semana }} <b>PERIODO</b> {{ $periodo->FECHA_INI }} a {{ $periodo->FECHA_FIN }}</h5>
         <hr>
-        <table class="table-8">
+        <table class="table-9">
             <tr>
                 <td><b>Trabajador</b></td>
                 <td>{{ $datos->A_PATERNO.' '.$datos->A_MATERNO.', '.$datos->NOMBRES }}</td>
@@ -45,7 +45,7 @@
                 <td>{{ $datos->CUENTA_BANCO }}</td>
             </tr>
         </table>
-        <table class="table table-8">
+        <table class="table table-9">
             <thead>
                 <tr>
                     <th class="content-children-medium">REMUNERACIONES</th>
@@ -65,7 +65,7 @@
                         </table>
                     </td>
                     <td>
-                        <table class="table-8">
+                        <table class="table-9">
                             @foreach ($descuentos as $item)
                             <tr>
                                 <td> {{ $item->DESCR_CORTA }} </td>
@@ -83,7 +83,7 @@
                 </tr>
             </tfoot>
         </table>
-        <table class="table table-8">
+        <table class="table table-9">
             <thead>
                 <tr>
                     <th class="content-children-medium">CONTRIBUCIONES DEL EMPLEADOR</th>
@@ -126,13 +126,13 @@
                 <td class="right"><b>NETO A PAGAR {{ $totales["NETO_A_PAGAR"] }}</b></td>
             </tr>
         </table>
-        <table class="center table-8">
+        <table class="center table-9">
             <tr>
                 <td><img src="{{ asset('img/jpuga.bmp') }}" alt="" height="100px"></td>
             </tr>
         </table>
         @if ($horas_semana!=null&&$periodo->ENVIO == 'S')
-            <table class="table table-8">
+            <table class="table table-9">
                 <thead>
                     <tr>
                         <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th><th>TOTAL</th>
