@@ -154,7 +154,7 @@
                     </td>
                     <td>
                         <h4><b>TOT.RETENCIONES</b></h4>
-                        <h4 class="right"><b>{{ $totales["TOT_DESCUENTOS"] }}</b></h4>
+                        <h4 class="right"><b>{{ isset($totales["TOT_DESCUENTOS"]) ? $totales["TOT_DESCUENTOS"] : 0.00 }}</b></h4>
                     </td>
                     <td>
                         <h4><b>TOT.APORTACION</b></h4>
