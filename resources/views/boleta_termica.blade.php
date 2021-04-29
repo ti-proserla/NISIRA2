@@ -79,7 +79,7 @@
             <tfoot>
                 <tr>
                     <td class="right"><b>{{ $totales["TOT_INGRESOS"] }}</b></td>
-                    <td class="right"><b>{{ $totales["TOT_DESCUENTOS"] }}</b></td>
+                    <td class="right"><b>{{ isset($totales["TOT_DESCUENTOS"]) ? $totales["TOT_DESCUENTOS"] : 0.00 }}</b></td>
                 </tr>
             </tfoot>
         </table>
