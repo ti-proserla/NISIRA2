@@ -256,6 +256,7 @@ class BoletasPagoController extends Controller
                                 "logo"=> "jayanca.png"
                         ]; 
                 }
+                
                 $encontrado=DB::connection($sqlsrv_empresa)
                         ->select("SELECT top 1	MP.IDPLANILLA idplanilla,
                                         CASE
@@ -456,24 +457,27 @@ class BoletasPagoController extends Controller
                                 $arrayCodigos)[0];
 
                 $horas_semana=DB::connection($sqlsrv_empresa)
-                        ->select("SELECT IDCODIGOGENERAL, 
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 2 then TOTAL_HORAS else 0 end ) as lunes,
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 3 then TOTAL_HORAS else 0 end ) as martes,
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 4 then TOTAL_HORAS else 0 end ) as miercoles,
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 5 then TOTAL_HORAS else 0 end ) as jueves,
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 6 then TOTAL_HORAS else 0 end ) as viernes,
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 7 then TOTAL_HORAS else 0 end ) as sabado,
-                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 1 then TOTAL_HORAS else 0 end ) as domingo,
+                        ->select("SET DATEFIRST 1;
+                                SELECT IDCODIGOGENERAL, 
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 1 then TOTAL_HORAS else 0 end ) as lunes,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 2 then TOTAL_HORAS else 0 end ) as martes,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 3 then TOTAL_HORAS else 0 end ) as miercoles,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 4 then TOTAL_HORAS else 0 end ) as jueves,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 5 then TOTAL_HORAS else 0 end ) as viernes,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 6 then TOTAL_HORAS else 0 end ) as sabado,
+                                SUM(case when DATEPART(WEEKDAY, FECHACREACION ) = 7 then TOTAL_HORAS else 0 end ) as domingo,
                                 SUM(TOTAL_HORAS) total
                         FROM DET_ASISTENCIA
-                        WHERE FECHACREACION >= ?
-                        AND FECHACREACION <= ?
+                        WHERE FECHACREACION >= CAST(? AS date)
+                        AND FECHACREACION <= CAST(? AS date)
                         AND IDCODIGOGENERAL = ?
                         GROUP BY IDCODIGOGENERAL",[
                                 $periodo->FECHA_INI_N,
                                 $periodo->FECHA_FIN_N,
                                 $datos->CODIGO
                         ]);
+
+
                 // dd(DB::connection($sqlsrv_empresa)
                 // ->select("select @@datefirst"));
                 return [
