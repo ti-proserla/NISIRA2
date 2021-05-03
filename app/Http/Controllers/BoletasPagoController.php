@@ -207,7 +207,6 @@ class BoletasPagoController extends Controller
                         $periodo->FECHA_FIN_N,
                         $datos->CODIGO
                 ]);
-        dd($horas_semana);
         $lista=[
                 "empresa"=> $empresa,
                 "datos"=> $datos,
@@ -475,6 +474,7 @@ class BoletasPagoController extends Controller
                                 $periodo->FECHA_FIN_N,
                                 $datos->CODIGO
                         ]);
+                dd($horas_semana);
                 return [
                                 "empresa"=> $empresa,
                                 "datos"=> $datos,
