@@ -295,8 +295,11 @@ class BoletasPagoController extends Controller
                                 ]);
                         }
                         $historialDescargas=new HistorialDescargas();
-                        $historialDescargas->codigos=$encontrado->movimientos;
                         $historialDescargas->codigo_personal=$codigo_personal;
+                        $historialDescargas->movimientos=$encontrado->movimientos;
+                        $historialDescargas->anio=$encontrado->anio;
+                        $historialDescargas->semana=$encontrado->semana;
+                        $historialDescargas->envio=$encontrado->envio;
                         $historialDescargas->save();
                         // return response()->json($this->getData($encontrado->movimientos,$request->empresa));
                         return view('boleta_termica',$this->getData($encontrado->movimientos,$request->empresa));
