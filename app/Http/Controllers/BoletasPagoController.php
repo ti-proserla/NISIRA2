@@ -207,7 +207,7 @@ class BoletasPagoController extends Controller
                         $periodo->FECHA_FIN_N,
                         $datos->CODIGO
                 ]);
-        // dd($horas_semana);
+        dd($horas_semana);
         $lista=[
                 "empresa"=> $empresa,
                 "datos"=> $datos,
