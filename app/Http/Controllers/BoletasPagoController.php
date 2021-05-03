@@ -287,7 +287,7 @@ class BoletasPagoController extends Controller
                                 ORDER BY anio DESC, semana DESC",[$codigo_personal]);
                 $encontrado=(count($encontrado)>0) ? $encontrado[0] : null;
                 if ($encontrado!=null) {
-                        $historial=HistorialDescargas::where('codigos',$encontrado->movimientos)->first();
+                        $historial=HistorialDescargas::where('movimientos',$encontrado->movimientos)->first();
                         if ($historial!=null) {
                                 return response()->json([
                                         "status"=>"error",
@@ -295,8 +295,8 @@ class BoletasPagoController extends Controller
                                 ]);
                         }
                         $historialDescargas=new HistorialDescargas();
-                        $historialDescargas->codigo_personal=$codigo_personal;
                         $historialDescargas->movimientos=$encontrado->movimientos;
+                        $historialDescargas->codigo_personal=$codigo_personal;
                         $historialDescargas->anio=$encontrado->anio;
                         $historialDescargas->semana=$encontrado->semana;
                         $historialDescargas->envio=$encontrado->envio;
