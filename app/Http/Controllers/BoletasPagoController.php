@@ -258,33 +258,73 @@ class BoletasPagoController extends Controller
                 }
                 
                 $encontrado=DB::connection($sqlsrv_empresa)
-                        ->select("SELECT top 1	MP.IDPLANILLA idplanilla,
-                                        CASE
-                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
-                                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
-                                                ELSE YEAR(PP.FECHA_INI) END anio,
-                                        MAX(CASE 
-                                                WHEN PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
-                                                WHEN PL.TIPO_ENVIO = 'Q' THEN MP.SEMANA 
-                                                ELSE SUBSTRING(MP.PERIODO, 5, 2) END)
-                                        semana,
-                                        RTRIM(CASE 
-                                                WHEN PL.TIPO_ENVIO = 'N'
-                                                THEN 'S' ELSE PL.TIPO_ENVIO end) envio,
-                                        CONCAT(MAX(MP.IDMOVIMIENTO),',',MIN(MP.IDMOVIMIENTO)) movimientos
-                                FROM movimiento_planilla MP
-                                INNER JOIN PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
-                                INNER JOIN PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
-                                INNER JOIN COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
-                                where IDCODIGOGENERAL = ?
-                                AND MP.TIPO='N'
-                                AND CERRADO='C'
-                                GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO, CASE
-                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
-                                WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
-                                ELSE YEAR(PP.FECHA_INI) END, DATEPART(ISO_WEEK,PP.FECHA_INI)
-                                HAVING MAX(PP.FECHA_FIN)<GETDATE()
-                                ORDER BY anio DESC, semana DESC",[$codigo_personal]);
+                        ->select("SELECT TOP 1 * FROM 
+                        (
+                        SELECT MP.IDPLANILLA idplanilla,
+                                CASE
+                                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                        ELSE YEAR(PP.FECHA_INI) END anio,
+                                MAX(CASE PL.TIPO_ENVIO
+                                        WHEN 'N' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                                        WHEN 'S' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                        WHEN 'Q' THEN MP.SEMANA 
+                                        ELSE SUBSTRING(MP.PERIODO, 5, 2) END)
+                                semana,
+                                        MAX(PP.FECHA_FIN) fecha_fin,
+                                RTRIM(CASE PL.TIPO_ENVIO
+                                        WHEN 'N'
+                                        THEN 'S' ELSE PL.TIPO_ENVIO end) envio,
+                                CONCAT(MAX(MP.IDMOVIMIENTO),',',MIN(MP.IDMOVIMIENTO)) movimientos,
+                                        '01' empresa
+                        FROM PROSERLA2020.dbo.movimiento_planilla MP
+                        INNER JOIN PROSERLA2020.dbo.PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
+                        INNER JOIN PROSERLA2020.dbo.PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
+                        INNER JOIN PROSERLA2020.dbo.COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
+                        where IDCODIGOGENERAL = ?
+                        AND MP.TIPO='N'
+                        AND CERRADO='C'
+                        GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO, CASE
+                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                        ELSE YEAR(PP.FECHA_INI) END, DATEPART(ISO_WEEK,PP.FECHA_INI)
+                        HAVING MAX(PP.FECHA_FIN)<GETDATE()
+                        
+                        
+                        UNION 
+                        
+                        SELECT MP.IDPLANILLA idplanilla,
+                                CASE
+                                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                                        ELSE YEAR(PP.FECHA_INI) END anio,
+                                MAX(CASE PL.TIPO_ENVIO
+                                        WHEN 'N' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                                        WHEN 'S' THEN DATEPART(ISO_WEEK,PP.FECHA_INI) 
+                                        WHEN 'Q' THEN MP.SEMANA 
+                                        ELSE SUBSTRING(MP.PERIODO, 5, 2) END)
+                                semana,
+                                        MAX(PP.FECHA_FIN) fecha_fin,
+                                RTRIM(CASE PL.TIPO_ENVIO
+                                        WHEN 'N'
+                                        THEN 'S' ELSE PL.TIPO_ENVIO end) envio,
+                                CONCAT(MAX(MP.IDMOVIMIENTO),',',MIN(MP.IDMOVIMIENTO)) movimientos,
+                                        '02' empresa
+                        FROM JAYANCA.dbo.movimiento_planilla MP
+                        INNER JOIN JAYANCA.dbo.PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
+                        INNER JOIN JAYANCA.dbo.PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
+                        INNER JOIN JAYANCA.dbo.COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
+                        where IDCODIGOGENERAL = ?
+                        AND MP.TIPO='N'
+                        AND CERRADO='C'
+                        GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO,
+                        CASE
+                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
+                        WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
+                        ELSE YEAR(PP.FECHA_INI) END, DATEPART(ISO_WEEK,PP.FECHA_INI)
+                        HAVING MAX(PP.FECHA_FIN)<GETDATE()
+                        ) TB
+                        ORDER BY fecha_fin DESC",[$codigo_personal,$codigo_personal]);
                 $encontrado=(count($encontrado)>0) ? $encontrado[0] : null;
                 if ($encontrado!=null) {
                         $historial=HistorialDescargas::where('movimientos',$encontrado->movimientos)->first();
@@ -301,6 +341,7 @@ class BoletasPagoController extends Controller
                         $historialDescargas->semana=$encontrado->semana;
                         $historialDescargas->envio=$encontrado->envio;
                         $historialDescargas->save();
+                        $request->empresa=$encontrado->empresa;
                         // return response()->json($this->getData($encontrado->movimientos,$request->empresa));
                         return view('boleta_termica',$this->getData($encontrado->movimientos,$request->empresa));
                 }else{
