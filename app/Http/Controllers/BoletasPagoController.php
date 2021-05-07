@@ -281,9 +281,11 @@ class BoletasPagoController extends Controller
                         INNER JOIN PROSERLA2020.dbo.PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
                         INNER JOIN PROSERLA2020.dbo.PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
                         INNER JOIN PROSERLA2020.dbo.COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
+                        INNER JOIN PROSERLA2020.dbo.MOVCTACTE M ON M.IDEMPRESA=C.IDEMPRESA AND M.IDREFERENCIA=C.IDCOBRARPAGARDOC
                         where IDCODIGOGENERAL = ?
                         AND MP.TIPO='N'
                         AND CERRADO='C'
+                        AND M.factor=-1
                         GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO, CASE
                         WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
                         WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) = 1 AND MONTH(PP.FECHA_INI) = 12 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) + 1
@@ -314,9 +316,11 @@ class BoletasPagoController extends Controller
                         INNER JOIN JAYANCA.dbo.PLANILLA PL ON PL.IDPLANILLA=MP.IDPLANILLA
                         INNER JOIN JAYANCA.dbo.PERIODO_PLANILLA PP ON PP.PERIODO=MP.PERIODO AND PP.SEMANA=MP.SEMANA AND MP.IDPLANILLA=PP.IDPLANILLA
                         INNER JOIN JAYANCA.dbo.COBRARPAGARDOC C ON MP.IDMOVIMIENTO=C.idmovplanilla
+                        INNER JOIN JAYANCA.dbo.MOVCTACTE M ON M.IDEMPRESA=C.IDEMPRESA AND M.IDREFERENCIA=C.IDCOBRARPAGARDOC
                         where IDCODIGOGENERAL = ?
                         AND MP.TIPO='N'
                         AND CERRADO='C'
+                        AND M.factor=-1
                         GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO,
                         CASE
                         WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
