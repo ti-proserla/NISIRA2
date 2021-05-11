@@ -284,7 +284,6 @@ class BoletasPagoController extends Controller
                         INNER JOIN PROSERLA2020.dbo.MOVCTACTE M ON M.IDEMPRESA=C.IDEMPRESA AND M.IDREFERENCIA=C.IDCOBRARPAGARDOC
                         where IDCODIGOGENERAL = ?
                         AND MP.TIPO='N'
-                        AND CERRADO='C'
                         AND M.factor=-1
                         GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO, CASE
                         WHEN DATEPART(ISO_WEEK, PP.FECHA_INI) > 50 AND MONTH(PP.FECHA_INI) = 1 AND (PL.TIPO_ENVIO = 'S' OR PL.TIPO_ENVIO = 'N') THEN YEAR(PP.FECHA_INI) - 1
@@ -319,7 +318,6 @@ class BoletasPagoController extends Controller
                         INNER JOIN JAYANCA.dbo.MOVCTACTE M ON M.IDEMPRESA=C.IDEMPRESA AND M.IDREFERENCIA=C.IDCOBRARPAGARDOC
                         where IDCODIGOGENERAL = ?
                         AND MP.TIPO='N'
-                        AND CERRADO='C'
                         AND M.factor=-1
                         GROUP BY MP.IDPLANILLA, PL.TIPO_ENVIO,
                         CASE
