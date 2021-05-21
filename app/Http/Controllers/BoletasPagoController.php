@@ -336,6 +336,14 @@ class BoletasPagoController extends Controller
                                         "message"=>"La boleta ya fue impresa."
                                 ]);
                         }
+                        
+                        if ($encontrado->idplanilla=='FIJ') {
+                                return response()->json([
+                                        "status"=>"error",
+                                        "message"=>"Boleta no disponible, intente más tarde."
+                                ]);
+                        }
+
                         $historialDescargas=new HistorialDescargas();
                         $historialDescargas->movimientos=$encontrado->movimientos;
                         $historialDescargas->codigo_personal=$codigo_personal;
