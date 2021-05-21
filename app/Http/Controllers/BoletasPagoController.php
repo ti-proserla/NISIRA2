@@ -329,7 +329,7 @@ class BoletasPagoController extends Controller
                         ORDER BY fecha_fin DESC",[$codigo_personal,$codigo_personal]);
                 $encontrado=(count($encontrado)>0) ? $encontrado[0] : null;
                 if ($encontrado!=null) {
-                        if ($encontrado->idplanilla=='FIJ') {
+                        if ($encontrado->idplanilla=='FIJ'||$encontrado->idplanilla=='OBR') {
                                 return response()->json([
                                         "status"=>"error",
                                         "message"=>"Boleta no disponible, intente mas tarde."
