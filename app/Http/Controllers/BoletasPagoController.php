@@ -329,6 +329,12 @@ class BoletasPagoController extends Controller
                         ORDER BY fecha_fin DESC",[$codigo_personal,$codigo_personal]);
                 $encontrado=(count($encontrado)>0) ? $encontrado[0] : null;
                 if ($encontrado!=null) {
+                        if ($encontrado->idplanilla=='FIJ') {
+                                return response()->json([
+                                        "status"=>"error",
+                                        "message"=>"Boleta no disponible, intente más tarde."
+                                ]);
+                        }
                         $historial=HistorialDescargas::where('movimientos',$encontrado->movimientos)->first();
                         if ($historial!=null) {
                                 return response()->json([
@@ -337,12 +343,6 @@ class BoletasPagoController extends Controller
                                 ]);
                         }
                         
-                        if ($encontrado->idplanilla=='FIJ') {
-                                return response()->json([
-                                        "status"=>"error",
-                                        "message"=>"Boleta no disponible, intente más tarde."
-                                ]);
-                        }
 
                         $historialDescargas=new HistorialDescargas();
                         $historialDescargas->movimientos=$encontrado->movimientos;
