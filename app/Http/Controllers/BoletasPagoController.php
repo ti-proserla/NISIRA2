@@ -332,7 +332,7 @@ class BoletasPagoController extends Controller
                         if ($encontrado->idplanilla=='FIJ') {
                                 return response()->json([
                                         "status"=>"error",
-                                        "message"=>"Boleta no disponible, intente más tarde."
+                                        "message"=>"Boleta no disponible, intente mas tarde."
                                 ]);
                         }
                         $historial=HistorialDescargas::where('movimientos',$encontrado->movimientos)->first();
