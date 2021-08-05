@@ -41,9 +41,10 @@ class AprobacionController extends Controller
         
         if ($existe_clienpro[0]->cantidad&&$tabla!="REQINTERNO") {
             $pendientes=DB::connection('sqlsrv')
-                            ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
+                            ->select(DB::raw("  SELECT T.*, M.DESCRIPCION motivo, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
                                                 FROM $tabla  AS T 
                                                 left JOIN CLIEPROV AS C ON T.idclieprov = C.IDCLIEPROV
+                                                LEFT JOIN MOTIVOSREQINTERNO AS M ON M.IDMOTIVO=T.IDMOTIVO
                                                 WHERE T.idestado = ?"),[$estado[0]->idestado]);
         }elseif ($existe_idresponsable[0]->cantidad) {
             $pendientes=DB::connection('sqlsrv')
