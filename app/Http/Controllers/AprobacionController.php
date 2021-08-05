@@ -38,20 +38,28 @@ class AprobacionController extends Controller
                                     AND FORMULARIO_ORIGEN = FORMULARIO_DESTINO 
                                     AND IDESTADO <> 'AP'
                             order by SECUENCIA desc"),[$tabla]);
-        
+        // dd("hola");
         if ($existe_clienpro[0]->cantidad&&$tabla!="REQINTERNO") {
             $pendientes=DB::connection('sqlsrv')
-                            ->select(DB::raw("  SELECT T.*, M.DESCRIPCION motivo, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
+                            ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
                                                 FROM $tabla  AS T 
                                                 left JOIN CLIEPROV AS C ON T.idclieprov = C.IDCLIEPROV
-                                                LEFT JOIN MOTIVOSREQINTERNO AS M ON M.IDMOTIVO=T.IDMOTIVO
                                                 WHERE T.idestado = ?"),[$estado[0]->idestado]);
         }elseif ($existe_idresponsable[0]->cantidad) {
-            $pendientes=DB::connection('sqlsrv')
-                            ->select(DB::raw("  SELECT T.*, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
-                                                FROM $tabla  AS T 
-                                                left JOIN RESPONSABLE AS C ON T.idresponsable = c.IDRESPONSABLE
-                                                WHERE T.idestado = ?"),[$estado[0]->idestado]);
+            if ($tabla=="REQINTERNO") {
+                $pendientes=DB::connection('sqlsrv')
+                                ->select(DB::raw("  SELECT T.*, M.DESCRIPCION motivo, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
+                                                    FROM $tabla  AS T 
+                                                    left JOIN RESPONSABLE AS C ON T.idresponsable = c.IDRESPONSABLE
+                                                    LEFT JOIN MOTIVOSREQINTERNO AS M ON M.IDMOTIVO=T.IDMOTIVO
+                                                    WHERE T.idestado = ?"),[$estado[0]->idestado]);
+            }else{
+                $pendientes=DB::connection('sqlsrv')
+                                ->select(DB::raw("  SELECT T.*, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
+                                                    FROM $tabla  AS T 
+                                                    left JOIN RESPONSABLE AS C ON T.idresponsable = c.IDRESPONSABLE
+                                                    WHERE T.idestado = ?"),[$estado[0]->idestado]);
+            }
         }else{
             $pendientes=DB::connection('sqlsrv')
                             ->select(DB::raw("  SELECT T.*, 'No Asignado' AS destinatariodoc 
