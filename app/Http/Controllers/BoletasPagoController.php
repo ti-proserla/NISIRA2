@@ -236,26 +236,8 @@ class BoletasPagoController extends Controller
         public function modulo_cajero(Request $request){
                 $codigo_personal=$request->codigo_personal;
 
-                if ($request->empresa=='01') {
-                        $sqlsrv_empresa="sqlsrv_proserla";
-                        $empresa= [
-                                "nombre_empresa" => "PROMOTORA Y SERVICIOS LAMBAYEQUE SAC",
-                                "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
-                                ",
-                                "ruc" => "20479813877",
-                                "logo"=> "logo.png"
-                        ]; 
-                }
-                if ($request->empresa=='02') {
-                        $sqlsrv_empresa="sqlsrv_jayanca";
-                        $empresa= [
-                                "nombre_empresa" => "JAYANCA FRUITS S.A.C.",
-                                "direccion"=> "CAL. ANTOLIN FLORES NRO. 1580 C.P. VILLA SAN JUAN (CARRETERA PANAMERICANA NORTE KM 37)
-                                ",
-                                "ruc" => "20561338281",
-                                "logo"=> "jayanca.png"
-                        ]; 
-                }
+                $sqlsrv_empresa="sqlsrv_proserla";
+                
                 
                 $encontrado=DB::connection($sqlsrv_empresa)
                         ->select("SELECT TOP 1 * FROM 
