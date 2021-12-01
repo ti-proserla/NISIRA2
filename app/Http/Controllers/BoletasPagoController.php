@@ -237,7 +237,11 @@ class BoletasPagoController extends Controller
                 $codigo_personal=$request->codigo_personal;
 
                 $sqlsrv_empresa="sqlsrv_proserla";
-                
+                if ($codigo_personal=='00000000') {
+                        return "<h4>Modulo Funcional</h4>
+                                <h4>-------------------</h4>
+                                <h4>-------------------</h4>";
+                }
                 
                 $encontrado=DB::connection($sqlsrv_empresa)
                         ->select("SELECT TOP 1 * FROM 
@@ -309,14 +313,17 @@ class BoletasPagoController extends Controller
                         HAVING MAX(PP.FECHA_FIN)<GETDATE()
                         ) TB
                         ORDER BY fecha_fin DESC",[$codigo_personal,$codigo_personal]);
+
+                
                 $encontrado=(count($encontrado)>0) ? $encontrado[0] : null;
                 if ($encontrado!=null) {
-                        // if ($encontrado->idplanilla=='FIJ'||$encontrado->idplanilla=='OBR') {
-                        //         return response()->json([
-                        //                 "status"=>"error",
-                        //                 "message"=>"Boleta no disponible, intente mas tarde."
-                        //         ]);
-                        // }
+                        // if ($encontrado->idplanilla=='FIJ'||$encontrado->idplanilla=='') {
+                                //         return response()->json([
+                                        //                 "status"=>"error",
+                                        //                 "message"=>"Boleta no disponible, intente mas tarde."
+                                        //         ]);
+                                        // }
+                        // dd($encontrado->movimientos);
                         $historial=HistorialDescargas::where('movimientos',$encontrado->movimientos)->first();
                         if ($historial!=null) {
                                 return response()->json([
@@ -324,7 +331,6 @@ class BoletasPagoController extends Controller
                                         "message"=>"La boleta ya fue impresa."
                                 ]);
                         }
-                        
 
                         $historialDescargas=new HistorialDescargas();
                         $historialDescargas->movimientos=$encontrado->movimientos;
@@ -334,6 +340,7 @@ class BoletasPagoController extends Controller
                         $historialDescargas->envio=$encontrado->envio;
                         $historialDescargas->save();
                         $request->empresa=$encontrado->empresa;
+                        
                         // return response()->json($this->getData($encontrado->movimientos,$request->empresa));
                         return view('boleta_termica',$this->getData($encontrado->movimientos,$request->empresa));
                 }else{
@@ -376,7 +383,7 @@ class BoletasPagoController extends Controller
 
                 $arrayCodigos=explode(',',$codigos);
                 $sCodigo= (count($arrayCodigos)==1) ? "?" : "?,?" ;    
-
+                // dd($arrayCodigos);
                 //sueldo
                 $datos=DB::connection($sqlsrv_empresa)
                         ->select(
@@ -386,7 +393,7 @@ class BoletasPagoController extends Controller
                                 SPP,
                                 CASE WHEN MP.IDAFP is NULL  THEN '-' ELSE PG.AUTOGENERADOAFP END 
                                 COD_SPP,
-                                FORMAT(PE.FECHA_INICIOPLANILLA,'dd/MM/yyyy') INICIO_PLANILLA,
+                                FORMAT(PE.FECHA_INGRESO,'dd/MM/yyyy') INICIO_PLANILLA,
                                 PG.A_MATERNO,
                                 PG.A_PATERNO,
                                 PG.NOMBRES, 
@@ -399,14 +406,14 @@ class BoletasPagoController extends Controller
                         FROM deta_movimiento_planilla D
                         INNER JOIN MOVIMIENTO_PLANILLA MP ON MP.IDMOVIMIENTO= D.IDMOVIMIENTO
                         INNER JOIN PERSONAL_GENERAL PG ON PG.IDCODIGOGENERAL=MP.IDCODIGOGENERAL
-                        INNER JOIN PERSONAL PE ON PE.IDCODIGOGENERAL=MP.IDCODIGOGENERAL
+                        INNER JOIN PERSONAL_EMPRESA PE ON PE.IDCODIGOGENERAL=MP.IDCODIGOGENERAL
                         INNER JOIN CONCEPTOS C ON C.IDCONCEPTO = D.IDCONCEPTO
                         LEFT JOIN AFPS A ON A.IDAFP=MP.IDAFP
                         WHERE MP.idmovimiento IN ($sCodigo)
                         AND C.DESCR_CORTA='BASICO'
                         AND IDTIPOCONCEPTO='IN'
                         -- AND MP.fecha_proceso > PE.FECHA_INICIOPLANILLA
-                        ORDER BY FECHA_INICIOPLANILLA DESC",
+                        ORDER BY FECHA_INGRESO DESC",
                         $arrayCodigos)[0];
                 //REMUNERACIONES
                 $ingresos=DB::connection($sqlsrv_empresa)
