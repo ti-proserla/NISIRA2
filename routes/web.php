@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::domain(env('APP_ENV')=='local' ? '127.0.0.1' : '172.16.1.112')->group(function () {
+    Route::get('/hola', function () {
+        dd("hola");
+    });
+
+});
 Route::get('/{any}', function(){
     // return view('welcome');
 })->where('any', '.*')->name('home');

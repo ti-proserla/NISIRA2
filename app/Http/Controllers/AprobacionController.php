@@ -15,7 +15,7 @@ class AprobacionController extends Controller
                 ->join('FORMULARIOS','FORMULARIOS.FORMULARIO','=','PRIVILEGIOS_APROBAR.FORMULARIO')
                 ->where('APRUEBA','1')
                 ->where('IDUSUARIO',$request->usuario)
-                ->toSql();
+                ->get();
         return response()->json($aprobar);
     }
 
