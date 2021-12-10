@@ -28,9 +28,7 @@ Route::group(['middleware' => ['cors']], function () {
     //     header('Access-Control-Allow-Headers: Authorization');
     //     http_response_code(204);
     // }
-// header('Access-Control-Allow-Origin: *');
-// header("Access-Control-Allow-Headers: *");
-// header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+
     Route::get('edt','AprobacionController@edt');
     Route::get('edt/pendiente','AprobacionController@pendientes');
     Route::get('edt/stock','AprobacionController@stock');
@@ -38,10 +36,16 @@ Route::group(['middleware' => ['cors']], function () {
     Route::post('edt/aprobar','AprobacionController@aprobar');
     Route::post('edt/login','AprobacionController@login');
 });
-Route::get('SeguimientoDocumentario','SeguimientoDocumentarioController@index');
 Route::get('costos','SeguimientoDocumentarioController@costos');
 Route::post('CostoAsignado','SeguimientoDocumentarioController@costo_asignado');
 
 
 
 Route::get('licencias', 'LicenciasController@index');
+
+//Panel Nisira Conect
+Route::post('login','CuentaController@login');
+Route::get('rutas','CuentaController@rutas');
+Route::get('cliente-proveedor/{idclieprov}','ClienteProveedorController@show');
+
+Route::get('SeguimientoDocumentario','SeguimientoDocumentarioController@index');

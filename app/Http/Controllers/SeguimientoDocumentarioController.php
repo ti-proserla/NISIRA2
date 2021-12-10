@@ -12,24 +12,23 @@ class SeguimientoDocumentarioController extends Controller
     public function index(Request $request){
 
         $query=
-        "SELECT	RD.FECHA FECHA_RECEPCION,
-                DRD.IDRECEPCION,
-                DRD.ITEM,
-                DRD.IDCLIEPROV,
-                DRD.RAZON_SOCIAL,
-                DRD.IDDOCUMENTO,
-                DRD.SERIE,
-                DRD.NUMERO,
-                DRD.IMPORTE,
-                DRD.FECHA FECHA_DOCUMENTO,
-                T1.fechacreacion FECHA_PROVISION,
+        "SELECT	FORMAT(RD.FECHA, 'yyyy-MM-dd') fecha_recepcion,
+                FORMAT(DRD.FECHA, 'yyyy-MM-dd') fecha_documento,
+                DRD.idrecepcion,
+                DRD.item,
+                DRD.idclieprov,
+                DRD.razon_social,
+                DRD.iddocumento,
+                CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
+                DRD.importe,
+                FORMAT(T1.fechacreacion, 'yyyy-MM-dd') fecha_provision,
                 CASE 
                     WHEN M.idmovctacte IS NOT NULL
                     THEN 'PAGADO'
                     ELSE ''
-                    END AS TESORERIA,
-                M.importe IMPORTE_CTA,
-                M.fecharegistro FECHA_TESORERIA
+                    END AS tesoreria,
+                M.importe importe_cta,
+                FORMAT(M.fecharegistro, 'yyyy-MM-dd') fecha_tesoreria
         FROM RECEPCION_DOCUMENTOS RD
         INNER JOIN drecepcion_documentos DRD ON  RD.IDRECEPCION=DRD.IDRECEPCION
 
@@ -49,7 +48,7 @@ class SeguimientoDocumentarioController extends Controller
 // '20602601286'
         $documentos=DB::connection('sqlsrv')
                         ->select(DB::raw($query),[$request->idclieprov]);
-        dd($documentos);
+        return response()->json($documentos);
     }
 
     public function costos(){
