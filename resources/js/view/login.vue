@@ -8,6 +8,11 @@
               </v-toolbar>
               <v-card-text>
                 <v-form autocomplete="off" v-on:submit.prevent="ingresar">
+                  <select v-model="cuenta.empresa">
+                    <option value="01">Proserla</option>
+                    <option value="02">Jayanca</option>
+                  </select>
+                  
                   <v-text-field
                     label="Usuario"
                     name="usuario"
@@ -40,7 +45,8 @@ export default {
         return {
             cuenta: {
                 usuario: '',
-                password: ''
+                password: '',
+                empresa: '01'
             }
         }
     },

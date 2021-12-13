@@ -11,11 +11,12 @@ class ClienteProveedorController extends Controller
 {
     public function index(Request $request){
 
-        $query="";
-
-// '20602601286'
+        $query="SELECT idclieprov,razon_social 
+                FROM CLIEPROV where CONCAT(idclieprov,' ',razon_social) 
+                like CONCAT('%',?,'%')";
+        
         $proveedor=DB::connection('sqlsrv')
-                        ->select(DB::raw($query),[$request->idclieprov]);
+                        ->select(DB::raw($query),[$request->search]);
         return response()->json($proveedor);
     }
 

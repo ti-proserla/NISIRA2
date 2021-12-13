@@ -10,6 +10,7 @@ Vue.use(Vuetify);
 
 import VueRouter from 'vue-router'
 Vue.use(VueRouter);
+import swal from 'sweetalert';
 
 // import Notifications from 'vue-notification'
 // Vue.use(Notifications)

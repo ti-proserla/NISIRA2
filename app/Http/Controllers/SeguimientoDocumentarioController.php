@@ -48,6 +48,17 @@ class SeguimientoDocumentarioController extends Controller
 // '20602601286'
         $documentos=DB::connection('sqlsrv')
                         ->select(DB::raw($query),[$request->idclieprov]);
+
+        foreach ($documentos as $key => $documento) {
+            $ca=CostoAsignado::where('idrecepcion',$documento->idrecepcion )
+                                ->where('item', $documento->item)
+                                ->where('empresa',$request->empresa)->first();
+            if ($ca!=null) {
+                $documento->con_ccosto= 'Si';
+            }else{
+                $documento->con_ccosto= 'No';
+            }
+        }
         return response()->json($documentos);
     }
 
@@ -60,12 +71,11 @@ class SeguimientoDocumentarioController extends Controller
         $costo_asignado=new CostoAsignado();
         $costo_asignado->idrecepcion=$request->idrecepcion;
         $costo_asignado->item=$request->item;
-        $costo_asignado->idccosto=$request->idccosto;
-        $costo_asignado->empresa='01';
+        $costo_asignado->empresa=$request->empresa;
         $costo_asignado->save();
         return response()->json([
             "status"    =>  "OK",
-            "message"   =>  "Centro Costo Asignado."
+            "message"   =>  "Costo Asignado."
         ]);
     }
 }

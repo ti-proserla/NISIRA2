@@ -111,6 +111,7 @@ class CuentaController extends Controller
     public function login(Request $request){
         $usuario=$request->usuario;
         $password=$request->password;
+        $empresa=$request->empresa;
         $password_encrytada="";
         $s1="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@";
         $s2="èïîìÄÅæôÆjöòÿÖÜø£É×ƒáíóúñÑ|°!#$%&/()=?¿<}~Çüéâäàåçêëãª¿®¦ÁÂÀ©¦@";
@@ -126,23 +127,32 @@ class CuentaController extends Controller
             }
         }
         
-        
-        $cuenta=DB::connection('sqlsrv')
-        ->select(DB::raw("select IDUSUARIO usuario from USUARIO where IDUSUARIO=? AND PASSWORD=?"),[$usuario,$password_encrytada]);
-        // dd($ceunta,$usuario,$password);
+        $sql_base="";
+        switch ($empresa) {
+            case '01':
+                $sql_base="sqlsrv_proserla";
+                break;
+            case '02':
+                $sql_base="sqlsrv_jayanca";
+                break;
+            
+            default:
+                # code...
+                break;
+        }
 
-        
-        // $cuenta=Cuenta::where('usuario',$request->usuario)
-        //     ->where('password',$request->password)
-        //     ->select('api_token','id','nombre','apellido','usuario','rol')
-        //     ->first();
-        // dd($request->all());
+        $cuenta=DB::connection($sql_base)
+                    ->select(DB::raw("select IDUSUARIO usuario from USUARIO where IDUSUARIO=? AND PASSWORD=?"),
+                                [$usuario,$password_encrytada]
+                            );
         if ($cuenta==null) {
             return response()->json([
                 "status"=> "ERROR",
                 "data"  => "Usuario o Contraseña incorrecta."
             ]);
         }else{
+            
+            $cuenta[0]->empresa=$empresa;
             return response()->json([
                 "status"=> "OK",
                 "data"  => $cuenta[0]

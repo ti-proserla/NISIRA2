@@ -46,6 +46,6 @@ Route::get('licencias', 'LicenciasController@index');
 //Panel Nisira Conect
 Route::post('login','CuentaController@login');
 Route::get('rutas','CuentaController@rutas');
-Route::get('cliente-proveedor/{idclieprov}','ClienteProveedorController@show');
+Route::resource('cliente-proveedor','ClienteProveedorController');
 
 Route::get('SeguimientoDocumentario','SeguimientoDocumentarioController@index');

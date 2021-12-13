@@ -17,7 +17,6 @@ class CreateCostoAsignadoTable extends Migration
             $table->id();
             $table->string('idrecepcion',30);
             $table->string('item',3);
-            $table->string('idccosto',12);
             $table->string('empresa',2);
             $table->timestamps();
         });
