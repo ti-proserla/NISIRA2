@@ -8,30 +8,51 @@
               </v-toolbar>
               <v-card-text>
                 <v-form autocomplete="off" v-on:submit.prevent="ingresar">
-                  <select v-model="cuenta.empresa">
+                  <!-- <select v-model="cuenta.empresa">
                     <option value="01">PROSERLA</option>
                     <option value="02">JAYANCA</option>
-                  </select>
-                  
-                  <v-text-field
-                    label="Usuario"
-                    name="usuario"
-                    prepend-icon="mdi-account"
-                    type="text"
-                    v-model="cuenta.usuario"
-                  ></v-text-field>
+                  </select> -->
+                  <v-row>
+                    <v-col cols="12">
+                      <v-select
+                        prepend-icon="mdi-domain"
 
-                  <v-text-field
-                    id="password"
-                    label="Password"
-                    name="password"
-                    prepend-icon="mdi-lock"
-                    type="password"
-                    v-model="cuenta.password"
-                  ></v-text-field>
-                  <div class="text-right">
+                      outlined
+                      dense
+                      label="Empresa:"
+                      v-model="cuenta.empresa"
+                      :items="[
+                        { 'id':'01' ,nombre_empresa:'PROSERLA'},
+                        { 'id':'02' ,nombre_empresa:'JAYANCA'}
+                      ]"
+                      item-text="nombre_empresa"
+                      item-value="id"
+                      :hide-details='true'>
+                      </v-select>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        label="Usuario"
+                        name="usuario"
+                        prepend-icon="mdi-account"
+                        type="text"
+                        v-model="cuenta.usuario"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        id="password"
+                        label="Password"
+                        name="password"
+                        prepend-icon="mdi-lock"
+                        type="password"
+                        v-model="cuenta.password"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="text-right">
                         <v-btn type="submit" color="primary">Ingresar</v-btn>
-                  </div>
+                    </v-col>
+                  </v-row>
                 </v-form>
               </v-card-text>
             </v-card>

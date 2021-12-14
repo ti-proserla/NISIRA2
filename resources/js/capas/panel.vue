@@ -4,7 +4,7 @@
          absolute
          >
             <v-app-bar-nav-icon @click="open=true"></v-app-bar-nav-icon>
-            <v-toolbar-title>NISIRA CONECT</v-toolbar-title>
+            <v-toolbar-title>BD {{ (cuenta.empresa=='01') ? 'PROSERLA': 'JAYANCA FRUITS'}}</v-toolbar-title>
         </v-app-bar>
         <v-navigation-drawer
             absolute
@@ -23,6 +23,8 @@
                 </v-list-item-avatar>
 
                 <v-list-item-content>
+                    {{ cuenta.usuario}}
+                    
                     <!-- <v-list-item-title>{{ cuenta.nombre.toUpperCase()+' '+cuenta.apellido.toUpperCase() }}</v-list-item-title> -->
                 </v-list-item-content>
             </v-list-item>
