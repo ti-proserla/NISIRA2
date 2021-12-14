@@ -214,7 +214,7 @@ export default {
         },
         save(idrecepcion,item){
             var t=this;
-            swal({ title: "¿Se asigno costo?", buttons: ['Cancelar',"Si"]})
+            swal({ title: "¿Desea asignar C. Costo?", buttons: ['Cancelar',"Si"]})
             .then((res) => {
                 if (res) {
                     axios.post(url_base+`/CostoAsignado`,{
