@@ -10,7 +10,6 @@ use App\Model\CostoAsignado;
 class SeguimientoDocumentarioController extends Controller
 {
     public function index(Request $request){
-
         $query=
         "SELECT	FORMAT(RD.FECHA, 'yyyy-MM-dd') fecha_recepcion,
                 FORMAT(DRD.FECHA, 'yyyy-MM-dd') fecha_documento,
@@ -21,7 +20,9 @@ class SeguimientoDocumentarioController extends Controller
                 DRD.iddocumento,
                 CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
                 MAX(DRD.importe) importe,
-                FORMAT(MAX(T1.fechacreacion), 'yyyy-MM-dd') fecha_provision,
+                CASE
+                    whe 
+                    FORMAT(MAX(T1.fechacreacion), 'yyyy-MM-dd') fecha_provision,
                 CASE 
                     WHEN LI.iddocumento IS NOT NULL
                         THEN CONCAT(MAX(LI.iddocumento),' ',MAX(LI.serie),'-',MAX(LI.numero))
@@ -80,7 +81,22 @@ class SeguimientoDocumentarioController extends Controller
         ORDER BY RD.FECHA DESC";
 
 // '20602601286'
-        $documentos=DB::connection('sqlsrv')
+
+        $empresa=$request->empresa;
+        $sql_base="";
+        switch ($empresa) {
+            case '01':
+                $sql_base="sqlsrv_proserla";
+                break;
+            case '02':
+                $sql_base="sqlsrv_jayanca";
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+        $documentos=DB::connection($sql_base)
                         ->select(DB::raw($query),[$request->idclieprov]);
 
         foreach ($documentos as $key => $documento) {

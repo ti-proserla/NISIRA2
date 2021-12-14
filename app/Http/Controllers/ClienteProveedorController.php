@@ -14,8 +14,21 @@ class ClienteProveedorController extends Controller
         $query="SELECT idclieprov,razon_social 
                 FROM CLIEPROV where CONCAT(idclieprov,' ',razon_social) 
                 like CONCAT('%',?,'%')";
-        
-        $proveedor=DB::connection('sqlsrv')
+        $empresa=$request->empresa;
+        $sql_base="";
+        switch ($empresa) {
+            case '01':
+                $sql_base="sqlsrv_proserla";
+                break;
+            case '02':
+                $sql_base="sqlsrv_jayanca";
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+        $proveedor=DB::connection($sql_base)
                         ->select(DB::raw($query),[$request->search]);
         return response()->json($proveedor);
     }

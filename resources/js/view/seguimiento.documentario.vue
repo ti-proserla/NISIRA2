@@ -52,14 +52,23 @@
                         :items="table"
                         >
                         <template v-slot:item.con_ccosto="{ item }">
-                            <v-chip 
-                                :outlined='false'
-                                color="error" 
-                                @click="save(item.idrecepcion, item.item)" 
-                                small 
-                                v-if="item.con_ccosto=='No'">
-                                Por Asignar
-                            </v-chip>
+                            <div v-if="item.con_ccosto=='No'">
+                                <v-chip 
+                                    :outlined='false'
+                                    color="error" 
+                                    @click="save(item.idrecepcion, item.item)" 
+                                    small 
+                                    v-if="cuenta.usuario=='GSEMINARIO'||cuenta.usuario=='ADMINISTRADOR'">
+                                    Por Asignar
+                                </v-chip>
+                                <v-chip 
+                                    :outlined='false'
+                                    color="error" 
+                                    small 
+                                    v-else>
+                                    Por Asignar
+                                </v-chip>
+                            </div>
                             <v-chip
                                 v-else
                                 small
@@ -232,11 +241,11 @@ export default {
                 }
             });
         },
-        // save(){
-        //     axios.post(url_base+'/CostoAsignado',this.costo_asignado)
-        //     .then(response => {
-        //     });
-        // }
+        changeEstado(){
+            // axios.post(url_base+'/changueEstado?usuario='+this.cuenta.usuario)
+            // .then(response => {
+            // });
+        }
     }
 }
 </script>
