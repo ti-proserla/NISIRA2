@@ -20,20 +20,39 @@ class SeguimientoDocumentarioController extends Controller
                 DRD.razon_social,
                 DRD.iddocumento,
                 CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
-                DRD.importe,
-                FORMAT(T1.fechacreacion, 'yyyy-MM-dd') fecha_provision,
+                MAX(DRD.importe) importe,
+                FORMAT(MAX(T1.fechacreacion), 'yyyy-MM-dd') fecha_provision,
                 CASE 
-                    WHEN M.idmovctacte IS NOT NULL
-                    THEN 'PAGADO'
-                    ELSE ''
-                    END AS tesoreria,
-                SUM(M.importe) importe_cta,
-                FORMAT(M.fecharegistro, 'yyyy-MM-dd') fecha_tesoreria
+                    WHEN LI.iddocumento IS NOT NULL
+                        THEN CONCAT(MAX(LI.iddocumento),' ',MAX(LI.serie),'-',MAX(LI.numero))
+                    WHEN MAX(M.idmovctacte) IS NOT NULL
+                        THEN 'PAGADO'
+                
+                ELSE ''
+                END AS tesoreria,
+                CASE 
+                    WHEN LI.iddocumento IS NOT NULL
+                    THEN MAX(DRD.importe)
+                    ELSE SUM(M.importe)
+                END
+                
+                importe_cta,
+                CASE 
+                    WHEN LI.iddocumento IS NOT NULL
+                        THEN FORMAT(LI.fechacreacion, 'yyyy-MM-dd')
+                    ELSE FORMAT(MAX(M.fecharegistro), 'yyyy-MM-dd')
+                END
+                fecha_tesoreria
+                
+                
+                
         FROM RECEPCION_DOCUMENTOS RD
         INNER JOIN drecepcion_documentos DRD ON  RD.IDRECEPCION=DRD.IDRECEPCION
 
         LEFT JOIN COBRARPAGARDOC T1  
             ON T1.numero=DRD.NUMERO AND T1.serie=DRD.SERIE AND DRD.IDCLIEPROV=T1.idclieprov AND T1.ORIGEN = 'P' 
+        -- LEFT JOIN DINGRESOEGRESOCABA DIE ON DIE.IDREFERENCIA=T1.idcobrarpagardoc
+        -- LEFT JOIN INGRESOEGRESOCABA IE ON IE.IDINGRESOEGRESOCABA=DIE.IDINGRESOEGRESOCABA
         LEFT JOIN 
         (	SELECT IDDOCUMENTO 
             FROM CFG_FORM_DOCUMENTO 
@@ -42,9 +61,23 @@ class SeguimientoDocumentarioController extends Controller
             ON TL.IDDOCUMENTO = T1.IDDOCUMENTO
 
         LEFT JOIN MOVCTACTE M ON M.IDEMPRESA=T1.IDEMPRESA AND M.IDREFERENCIA=T1.IDCOBRARPAGARDOC and M.factor=-1 AND M.TABLA<>'AJUSTE'
-        WHERE DRD.IDCLIEPROV=?
-        GROUP BY DRD.idrecepcion, DRD.item
-        ORDER BY FECHA_RECEPCION DESC";
+        LEFT JOIN DLIQUIDACIONGASTO DL ON DL.iddocumento=DRD.iddocumento AND DL.idclieprov=DRD.IDCLIEPROV AND DL.numero=DRD.NUMERO 
+        LEFT JOIN COBRARPAGARDOC LI ON LI.idcobrarpagardoc=DL.idcobrarpagardoc 
+        WHERE DRD.IDCLIEPROV='20602601286'
+        GROUP BY RD.FECHA,DRD.FECHA, 
+                DRD.idrecepcion, 
+                DRD.item,
+                DRD.idclieprov,
+                DRD.razon_social,
+                DRD.iddocumento,
+                DRD.iddocumento,
+                DRD.serie,
+                DRD.numero,
+                LI.iddocumento,
+                LI.numero,
+                LI.fechacreacion
+
+        ORDER BY RD.FECHA DESC";
 
 // '20602601286'
         $documentos=DB::connection('sqlsrv')

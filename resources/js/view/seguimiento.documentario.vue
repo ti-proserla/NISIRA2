@@ -52,13 +52,14 @@
                         :items="table"
                         >
                         <template v-slot:item.con_ccosto="{ item }">
-                            <v-btn 
+                            <v-chip 
+                                :outlined='false'
                                 color="error" 
                                 @click="save(item.idrecepcion, item.item)" 
                                 small 
                                 v-if="item.con_ccosto=='No'">
-                                Asignar
-                            </v-btn>
+                                Por Asignar
+                            </v-chip>
                             <v-chip
                                 v-else
                                 small
@@ -66,7 +67,7 @@
                                 color="success"
                                 text-color="white"
                                 >
-                                    {{item.con_ccosto}}
+                                    Asignado
                                 </v-chip>
                         </template>
                         <!-- con_ccosto -->
