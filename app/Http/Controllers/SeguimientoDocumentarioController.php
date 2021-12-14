@@ -63,7 +63,7 @@ class SeguimientoDocumentarioController extends Controller
         LEFT JOIN MOVCTACTE M ON M.IDEMPRESA=T1.IDEMPRESA AND M.IDREFERENCIA=T1.IDCOBRARPAGARDOC and M.factor=-1 AND M.TABLA<>'AJUSTE'
         LEFT JOIN DLIQUIDACIONGASTO DL ON DL.iddocumento=DRD.iddocumento AND DL.idclieprov=DRD.IDCLIEPROV AND DL.numero=DRD.NUMERO 
         LEFT JOIN COBRARPAGARDOC LI ON LI.idcobrarpagardoc=DL.idcobrarpagardoc 
-        WHERE DRD.IDCLIEPROV='20602601286'
+        WHERE DRD.IDCLIEPROV=?
         GROUP BY RD.FECHA,DRD.FECHA, 
                 DRD.idrecepcion, 
                 DRD.item,
