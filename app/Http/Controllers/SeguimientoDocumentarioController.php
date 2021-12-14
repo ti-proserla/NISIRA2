@@ -20,9 +20,7 @@ class SeguimientoDocumentarioController extends Controller
                 DRD.iddocumento,
                 CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
                 MAX(DRD.importe) importe,
-                CASE
-                    whe 
-                    FORMAT(MAX(T1.fechacreacion), 'yyyy-MM-dd') fecha_provision,
+                FORMAT(MAX(T1.fechacreacion), 'yyyy-MM-dd') fecha_provision,
                 CASE 
                     WHEN LI.iddocumento IS NOT NULL
                         THEN CONCAT(MAX(LI.iddocumento),' ',MAX(LI.serie),'-',MAX(LI.numero))
