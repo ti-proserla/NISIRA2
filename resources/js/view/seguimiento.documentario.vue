@@ -69,16 +69,15 @@
                                     Por Asignar
                                 </v-chip>
                             </div>
-                            <p v-else>{{ item.con_ccosto }}</p>
-                            <!-- <v-chip
+                            <v-chip
                                 v-else
                                 small
                                 class="ma-2"
                                 color="success"
                                 text-color="white"
                                 >
-                                    
-                                </v-chip> -->
+                                {{ item.con_ccosto }}    
+                                </v-chip>
                         </template>
                         <!-- con_ccosto -->
                     </v-data-table>
@@ -108,7 +107,7 @@ export default {
                 // { text: 'ID Recepción', value: 'idrecepcion' },
                 // { text: 'Item', value: 'item' },
                 { text: 'Recepción', value: 'fecha_recepcion' },
-                { text: 'C.Costo', value: 'con_ccosto' },
+                { text: 'C.Costo', value: 'con_ccosto' , align: 'center' },
                 { text: 'Provisión', value: 'fecha_provision' },
                 { text: 'Tesoreria', value: 'tesoreria' },
                 { text: 'Fecha Pago', value: 'fecha_tesoreria' },
