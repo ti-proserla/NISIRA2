@@ -11,8 +11,8 @@ class SeguimientoDocumentarioController extends Controller
 {
     public function index(Request $request){
         $query=
-        "SELECT	FORMAT(RD.FECHA, 'yyyy-MM-dd') fecha_recepcion,
-                FORMAT(DRD.FECHA, 'yyyy-MM-dd') fecha_documento,
+        "SELECT	FORMAT(RD.FECHA, 'dd/MM/yyyy HH:mm') fecha_recepcion,
+                FORMAT(DRD.FECHA, 'dd/MM/yyyy') fecha_documento,
                 DRD.idrecepcion,
                 DRD.item,
                 DRD.idclieprov,
@@ -20,7 +20,7 @@ class SeguimientoDocumentarioController extends Controller
                 DRD.iddocumento,
                 CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
                 MAX(DRD.importe) importe,
-                FORMAT(MAX(T1.fechacreacion), 'yyyy-MM-dd') fecha_provision,
+                FORMAT(MAX(T1.fechacreacion), 'dd/MM/yyyy HH:mm') fecha_provision,
                 CASE 
                     WHEN LI.iddocumento IS NOT NULL
                         THEN CONCAT(MAX(LI.iddocumento),' ',MAX(LI.serie),'-',MAX(LI.numero))
@@ -38,8 +38,8 @@ class SeguimientoDocumentarioController extends Controller
                 importe_cta,
                 CASE 
                     WHEN LI.iddocumento IS NOT NULL
-                        THEN FORMAT(LI.fechacreacion, 'yyyy-MM-dd')
-                    ELSE FORMAT(MAX(M.fecharegistro), 'yyyy-MM-dd')
+                        THEN FORMAT(LI.fechacreacion, 'dd/MM/yyyy')
+                    ELSE FORMAT(MAX(M.fecharegistro), 'dd/MM/yyyy')
                 END
                 fecha_tesoreria
                 
@@ -100,9 +100,10 @@ class SeguimientoDocumentarioController extends Controller
         foreach ($documentos as $key => $documento) {
             $ca=CostoAsignado::where('idrecepcion',$documento->idrecepcion )
                                 ->where('item', $documento->item)
-                                ->where('empresa',$request->empresa)->first();
+                                ->where('empresa',$request->empresa)
+                                ->first();
             if ($ca!=null) {
-                $documento->con_ccosto= 'Si';
+                $documento->con_ccosto= Carbon::parse($ca->created_at)->format('d/m/Y H:i');
             }else{
                 $documento->con_ccosto= 'No';
             }

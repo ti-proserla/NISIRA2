@@ -69,15 +69,16 @@
                                     Por Asignar
                                 </v-chip>
                             </div>
-                            <v-chip
+                            <p v-else>{{ item.con_ccosto }}</p>
+                            <!-- <v-chip
                                 v-else
                                 small
                                 class="ma-2"
                                 color="success"
                                 text-color="white"
                                 >
-                                    Asignado
-                                </v-chip>
+                                    
+                                </v-chip> -->
                         </template>
                         <!-- con_ccosto -->
                     </v-data-table>
@@ -99,8 +100,8 @@ export default {
             },
             table: [],
             header: [
-                { text: 'Código', value: 'idclieprov' },
-                { text: 'Razón Social', value: 'razon_social' },
+                // { text: 'Código', value: 'idclieprov' },
+                // { text: 'Razón Social', value: 'razon_social' },
                 { text: 'Documento', value: 'documento' },
                 { text: 'Fecha Emisión', value: 'fecha_documento'},
                 { text: 'Importe', value: 'importe',align: 'end' },
