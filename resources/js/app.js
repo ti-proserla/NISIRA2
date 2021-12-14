@@ -132,7 +132,11 @@ Vue.component('panel',require("./capas/panel.vue").default);
 // Vue.component("masivo", require("./view/masivo.vue").default);
 const app = new Vue({
     el: '#app',
-    vuetify: new Vuetify(),
+    vuetify: new Vuetify({
+      icons: {
+        iconfont: 'mdi', // default - only for display purposes
+      },
+    }),
     router,
     store,
     render: h => h(Dashboard)

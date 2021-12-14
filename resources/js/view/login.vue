@@ -4,13 +4,13 @@
           <v-col cols="12" sm="8" md="4">
             <v-card class="elevation-6">
               <v-toolbar color="primary" dark flat>
-                <v-toolbar-title>Nisira Conect</v-toolbar-title>
+                <v-toolbar-title>Reporteador ERP</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form autocomplete="off" v-on:submit.prevent="ingresar">
                   <select v-model="cuenta.empresa">
-                    <option value="01">Proserla</option>
-                    <option value="02">Jayanca</option>
+                    <option value="01">PROSERLA</option>
+                    <option value="02">JAYANCA</option>
                   </select>
                   
                   <v-text-field

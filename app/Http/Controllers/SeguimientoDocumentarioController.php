@@ -20,14 +20,14 @@ class SeguimientoDocumentarioController extends Controller
                 DRD.razon_social,
                 DRD.iddocumento,
                 CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
-                DRD.importe,
+                Round(DRD.importe, 2, 0) importe,
                 FORMAT(T1.fechacreacion, 'yyyy-MM-dd') fecha_provision,
                 CASE 
                     WHEN M.idmovctacte IS NOT NULL
                     THEN 'PAGADO'
                     ELSE ''
                     END AS tesoreria,
-                M.importe importe_cta,
+                Round(M.importe, 2, 0) importe_cta,
                 FORMAT(M.fecharegistro, 'yyyy-MM-dd') fecha_tesoreria
         FROM RECEPCION_DOCUMENTOS RD
         INNER JOIN drecepcion_documentos DRD ON  RD.IDRECEPCION=DRD.IDRECEPCION

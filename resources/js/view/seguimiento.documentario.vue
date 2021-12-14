@@ -5,6 +5,8 @@
             <v-row>
                 <v-col cols="12" sm=6 lg="3">
                     <v-autocomplete
+                        outlined
+                        dense
                         no-filter
                         v-model="consulta"
                         :items="items"
@@ -15,7 +17,7 @@
                         item-text="razon_social"
                         item-value="idclieprov"
                         label="Buscar Proveedor"
-                        placeholder="Start typing to Search"
+                        placeholder="Ingresar RUC o Razón Social"
                         prepend-icon="mdi-database-search"
                         return-object
                     ></v-autocomplete>
@@ -50,14 +52,18 @@
                         :items="table"
                         >
                         <template v-slot:item.con_ccosto="{ item }">
-                            <v-btn @click="save(item.idrecepcion, item.item)" dense v-if="item.con_ccosto=='No'">
-                                Marcar
+                            <v-btn 
+                                color="error" 
+                                @click="save(item.idrecepcion, item.item)" 
+                                small 
+                                v-if="item.con_ccosto=='No'">
+                                Asignar
                             </v-btn>
                             <v-chip
                                 v-else
                                 small
                                 class="ma-2"
-                                color="warning"
+                                color="success"
                                 text-color="white"
                                 >
                                     {{item.con_ccosto}}
@@ -86,16 +92,17 @@ export default {
                 { text: 'Código', value: 'idclieprov' },
                 { text: 'Razón Social', value: 'razon_social' },
                 { text: 'Documento', value: 'documento' },
-                { text: 'Fecha Documento', value: 'fecha_documento'},
-                { text: 'Importe', value: 'importe' },
-                { text: 'ID Recepción', value: 'idrecepcion' },
-                { text: 'Item', value: 'item' },
-                { text: 'Con CCosto', value: 'con_ccosto' },
+                { text: 'Fecha Emisión', value: 'fecha_documento'},
+                { text: 'Importe', value: 'importe',align: 'end' },
+                // { text: 'ID Recepción', value: 'idrecepcion' },
+                // { text: 'Item', value: 'item' },
                 { text: 'Recepción', value: 'fecha_recepcion' },
+                { text: 'Con CCosto', value: 'con_ccosto' },
                 { text: 'Provisión', value: 'fecha_provision' },
                 { text: 'Tesoreria', value: 'tesoreria' },
-                { text: 'Fecha Tesoreria', value: 'fecha_tesoreria' },
-                { text: 'Importe CTA', value: 'importe_cta' },
+                { text: 'Fecha Pago', value: 'fecha_tesoreria' },
+                { text: 'Importe CTA', value: 'importe_cta' , align: 'end'}, //a la derecha y con 2 comas
+
             ],
             costo_asignado:{
                 item: '',
