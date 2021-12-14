@@ -190,7 +190,16 @@ export default {
                 params: this.consulta
             })
             .then(response => {
-                this.table=response.data;
+                var data=response.data;
+                data.map(row => {
+                    const importe = Number(row.importe).toFixed(2);
+                    const importe_cta = Number(row.importe_cta).toFixed(2);
+                    return Object.assign({}, row, { importe,importe_cta })
+                })
+                // data.map(row => {
+                //     return Object.assign({}, row, { importe })
+                // })
+                this.table=data;
             });
         },
         save(idrecepcion,item){
