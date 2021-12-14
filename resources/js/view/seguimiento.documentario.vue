@@ -152,7 +152,7 @@ export default {
         // // Items have already been requested
         if (this.isLoading) return
         
-        if (val==null) {
+        if (val=='') {
             this.consulta={
                 idclieprov: '',
                 razon_social: ''
