@@ -97,7 +97,7 @@ export default {
                 // { text: 'ID Recepción', value: 'idrecepcion' },
                 // { text: 'Item', value: 'item' },
                 { text: 'Recepción', value: 'fecha_recepcion' },
-                { text: 'Con CCosto', value: 'con_ccosto' },
+                { text: 'C.Costo', value: 'con_ccosto' },
                 { text: 'Provisión', value: 'fecha_provision' },
                 { text: 'Tesoreria', value: 'tesoreria' },
                 { text: 'Fecha Pago', value: 'fecha_tesoreria' },

@@ -20,14 +20,14 @@ class SeguimientoDocumentarioController extends Controller
                 DRD.razon_social,
                 DRD.iddocumento,
                 CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
-                Round(DRD.importe, 2, 0) importe,
+                DRD.importe,
                 FORMAT(T1.fechacreacion, 'yyyy-MM-dd') fecha_provision,
                 CASE 
                     WHEN M.idmovctacte IS NOT NULL
                     THEN 'PAGADO'
                     ELSE ''
                     END AS tesoreria,
-                Round(M.importe, 2, 0) importe_cta,
+                SUM(M.importe) importe_cta,
                 FORMAT(M.fecharegistro, 'yyyy-MM-dd') fecha_tesoreria
         FROM RECEPCION_DOCUMENTOS RD
         INNER JOIN drecepcion_documentos DRD ON  RD.IDRECEPCION=DRD.IDRECEPCION
@@ -43,6 +43,7 @@ class SeguimientoDocumentarioController extends Controller
 
         LEFT JOIN MOVCTACTE M ON M.IDEMPRESA=T1.IDEMPRESA AND M.IDREFERENCIA=T1.IDCOBRARPAGARDOC and M.factor=-1 AND M.TABLA<>'AJUSTE'
         WHERE DRD.IDCLIEPROV=?
+        GROUP BY DRD.idrecepcion, DRD.item
         ORDER BY FECHA_RECEPCION DESC";
 
 // '20602601286'
