@@ -191,7 +191,7 @@ export default {
             })
             .then(response => {
                 var data=response.data;
-                data.map(row => {
+                data=data.map(row => {
                     const importe = Number(row.importe).toFixed(2);
                     const importe_cta = Number(row.importe_cta).toFixed(2);
                     return Object.assign({}, row, { importe,importe_cta })
