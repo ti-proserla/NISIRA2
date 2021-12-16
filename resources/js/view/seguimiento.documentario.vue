@@ -3,8 +3,9 @@
         <v-card-title>Seguimiento Documentario</v-card-title>              
         <v-card-text>
             <v-row>
-                <v-col cols="12" sm=6 lg="3">
+                <v-col cols="12" sm=6 lg="4">
                     <v-autocomplete
+                        chips
                         outlined
                         dense
                         no-filter
@@ -22,7 +23,8 @@
                         return-object
                     ></v-autocomplete>
                 </v-col>
-                <v-col cols="12" sm=6 lg="3">
+
+                <v-col v-if="consulta!=null" cols="12" sm=6 lg="3">
                     <v-text-field
                         label="Código:"
                         v-model="consulta.idclieprov"
@@ -31,7 +33,7 @@
                         >
                     </v-text-field>
                 </v-col>
-                <v-col cols="12" sm=6 lg="3">
+                <v-col v-if="consulta!=null" cols="12" sm=6 lg="3">
                     <v-text-field
                         label="Razón Social:"
                         v-model="consulta.razon_social"
@@ -103,6 +105,7 @@ export default {
                 // { text: 'Razón Social', value: 'razon_social' },
                 { text: 'Documento', value: 'documento' },
                 { text: 'Fecha Emisión', value: 'fecha_documento'},
+                { text: 'Moneda', value: 'moneda'},
                 { text: 'Importe', value: 'importe',align: 'end' },
                 // { text: 'ID Recepción', value: 'idrecepcion' },
                 // { text: 'Item', value: 'item' },
@@ -161,12 +164,12 @@ export default {
         // // Items have already been requested
         if (this.isLoading) return
         
-        if (val=='') {
+        if (val==''||val==null) {
             this.consulta={
                 idclieprov: '',
                 razon_social: ''
             }
-        }
+        }else{
             this.isLoading = true
             // Lazily load input items
             console.log(val);
@@ -184,6 +187,7 @@ export default {
                 console.log(err)
               })
               .finally(() => (this.isLoading = false))
+        }
         // }
 
       },

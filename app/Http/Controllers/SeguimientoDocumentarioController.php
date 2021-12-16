@@ -14,6 +14,7 @@ class SeguimientoDocumentarioController extends Controller
         "SELECT	FORMAT(RD.FECHA, 'dd/MM/yyyy HH:mm') fecha_recepcion,
                 FORMAT(DRD.FECHA, 'dd/MM/yyyy') fecha_documento,
                 DRD.idrecepcion,
+                MO.descripcion moneda,
                 DRD.item,
                 DRD.idclieprov,
                 DRD.razon_social,
@@ -47,7 +48,7 @@ class SeguimientoDocumentarioController extends Controller
                 
         FROM RECEPCION_DOCUMENTOS RD
         INNER JOIN drecepcion_documentos DRD ON  RD.IDRECEPCION=DRD.IDRECEPCION
-
+        INNER JOIN MONEDAS MO ON MO.idmoneda=DRD.idmoneda
         LEFT JOIN COBRARPAGARDOC T1  
             ON T1.numero=DRD.NUMERO AND T1.serie=DRD.SERIE AND DRD.IDCLIEPROV=T1.idclieprov AND T1.ORIGEN = 'P' 
         -- LEFT JOIN DINGRESOEGRESOCABA DIE ON DIE.IDREFERENCIA=T1.idcobrarpagardoc
@@ -74,8 +75,8 @@ class SeguimientoDocumentarioController extends Controller
                 DRD.numero,
                 LI.iddocumento,
                 LI.numero,
-                LI.fechacreacion
-
+                LI.fechacreacion,
+                MO.descripcion
         ORDER BY RD.FECHA DESC";
 
 // '20602601286'
