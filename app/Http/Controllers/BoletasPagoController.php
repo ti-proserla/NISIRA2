@@ -239,7 +239,7 @@ class BoletasPagoController extends Controller
                 $sqlsrv_empresa="sqlsrv_proserla";
                 if ($codigo_personal=='00000000') {
                         return "<h4>Modulo Funcional</h4>
-                                <h4>-------------------</h4>
+                                <h4>".$request->device."</h4>
                                 <h4>-------------------</h4>";
                 }
                 
@@ -331,13 +331,14 @@ class BoletasPagoController extends Controller
                                         "message"=>"La boleta ya fue impresa."
                                 ]);
                         }
-
                         $historialDescargas=new HistorialDescargas();
                         $historialDescargas->movimientos=$encontrado->movimientos;
                         $historialDescargas->codigo_personal=$codigo_personal;
                         $historialDescargas->anio=$encontrado->anio;
                         $historialDescargas->semana=$encontrado->semana;
                         $historialDescargas->envio=$encontrado->envio;
+                        $historialDescargas->empresa=$encontrado->empresa;
+                        $historialDescargas->device=$request->device;
                         $historialDescargas->save();
                         $request->empresa=$encontrado->empresa;
                         
