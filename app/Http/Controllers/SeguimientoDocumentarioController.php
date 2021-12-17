@@ -64,6 +64,8 @@ class SeguimientoDocumentarioController extends Controller
         LEFT JOIN DLIQUIDACIONGASTO DL ON DL.iddocumento=DRD.iddocumento AND DL.idclieprov=DRD.IDCLIEPROV AND DL.numero=DRD.NUMERO 
         LEFT JOIN COBRARPAGARDOC LI ON LI.idcobrarpagardoc=DL.idcobrarpagardoc 
         WHERE DRD.IDCLIEPROV=?
+        AND DRD.serie like CONCAT('%',?)
+        AND DRD.numero like CONCAT('%',?)
         GROUP BY RD.FECHA,DRD.FECHA, 
                 DRD.idrecepcion, 
                 DRD.item,
@@ -96,7 +98,7 @@ class SeguimientoDocumentarioController extends Controller
                 break;
         }
         $documentos=DB::connection($sql_base)
-                        ->select(DB::raw($query),[$request->idclieprov]);
+                        ->select(DB::raw($query),[$request->idclieprov,$request->serie,$request->numero]);
 
         foreach ($documentos as $key => $documento) {
             $ca=CostoAsignado::where('idrecepcion',$documento->idrecepcion )

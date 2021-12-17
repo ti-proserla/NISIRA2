@@ -3,7 +3,7 @@
         <v-card-title>Seguimiento Documentario</v-card-title>              
         <v-card-text>
             <v-row>
-                <v-col cols="12" sm=6 lg="4">
+                <v-col cols="12" sm=6 lg="5">
                     <v-autocomplete
                         chips
                         outlined
@@ -24,7 +24,7 @@
                     ></v-autocomplete>
                 </v-col>
 
-                <v-col v-if="consulta!=null" cols="12" sm=6 lg="3">
+                <v-col v-if="consulta!=null" cols="12" sm=6 lg="2">
                     <v-text-field
                         label="Código:"
                         v-model="consulta.idclieprov"
@@ -33,11 +33,27 @@
                         >
                     </v-text-field>
                 </v-col>
-                <v-col v-if="consulta!=null" cols="12" sm=6 lg="3">
+                <!-- <v-col v-if="consulta!=null" cols="12" sm=6 lg="3">
                     <v-text-field
                         label="Razón Social:"
                         v-model="consulta.razon_social"
                         readonly
+                        >
+                    </v-text-field>
+                </v-col> -->
+                <v-col v-if="consulta!=null" cols="12" sm=6 lg="1">
+                    <v-text-field
+                        label="Serie:"
+                        v-model="serie"
+                        type="text"
+                        >
+                    </v-text-field>
+                </v-col>
+                <v-col v-if="consulta!=null" cols="12" sm=6 lg="2">
+                    <v-text-field
+                        label="Número:"
+                        v-model="numero"
+                        type="text"
                         >
                     </v-text-field>
                 </v-col>
@@ -96,6 +112,8 @@ import { mapState,mapMutations } from 'vuex'
 export default {
     data() {
         return {
+            serie:'',
+            numero: '',
             consulta: {
                 idclieprov: '',
             },
@@ -200,7 +218,7 @@ export default {
             });
         },
         consultar(){
-            axios.get(url_base+'/SeguimientoDocumentario?empresa='+this.cuenta.empresa, {
+            axios.get(url_base+`/SeguimientoDocumentario?empresa=${this.cuenta.empresa}&serie=${this.serie}&numero=${this.numero}`, {
                 params: this.consulta
             })
             .then(response => {
