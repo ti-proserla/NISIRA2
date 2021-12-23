@@ -81,6 +81,14 @@
                     </v-list-item-content>
                 </v-list-item>
 
+                <v-list-item v-if="existe('/seguimiento-recepcion')" link to="/seguimiento-recepcion">
+                    <v-list-item-icon>
+                        <i class="far fa-building"></i>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        Seguimiento Recepción
+                    </v-list-item-content>
+                </v-list-item>
                 <v-list-item v-if="existe('/seguimiento-documentario')" link to="/seguimiento-documentario">
                     <v-list-item-icon>
                         <i class="far fa-building"></i>

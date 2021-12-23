@@ -38,6 +38,7 @@ Route::group(['middleware' => ['cors']], function () {
 });
 Route::get('costos','SeguimientoDocumentarioController@costos');
 Route::post('CostoAsignado','SeguimientoDocumentarioController@costo_asignado');
+Route::post('CostoAsignado/recepcion','SeguimientoDocumentarioController@costo_asignado_recepcion');
 
 
 
@@ -49,3 +50,4 @@ Route::get('rutas','CuentaController@rutas');
 Route::resource('cliente-proveedor','ClienteProveedorController');
 
 Route::get('SeguimientoDocumentario','SeguimientoDocumentarioController@index');
+Route::get('SeguimientoDocumentario/Recepcion','SeguimientoDocumentarioController@recepcion');

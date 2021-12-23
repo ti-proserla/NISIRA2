@@ -15,6 +15,8 @@ class CreateHistorialDescargasTable extends Migration
     {
         Schema::create('historial_descargas', function (Blueprint $table) {
             $table->id();
+            $table->string('empresa',2)->nullable();
+            $table->string('device',20)->nullable();
             $table->string('codigo_personal',8);
             $table->string('movimientos',50);
             $table->integer('anio');
