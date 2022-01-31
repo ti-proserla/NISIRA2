@@ -105,9 +105,9 @@ class CuentaController extends Controller
         // }
         array_push($listaRutas,"/");
         array_push($listaRutas,"/seguimiento-documentario");
-        if ($request->usuario=='GSEMINARIO'||$request->usuario=='ADMINISTRADOR') {
-            array_push($listaRutas,"/seguimiento-recepcion");
-        }
+        // if ($request->usuario=='GSEMINARIO'||$request->usuario=='ADMINISTRADOR') {
+        array_push($listaRutas,"/seguimiento-recepcion");
+        // }
         return response()->json($listaRutas);
     }
 

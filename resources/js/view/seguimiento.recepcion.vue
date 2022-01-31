@@ -25,7 +25,7 @@
                     </v-btn>
                 </v-col>
                 <v-col cols="12" sm=4 lg="2" class="text-right">
-                    <v-btn color="error" @click="save">
+                    <v-btn color="error" @click="save" v-if="cuenta.usuario=='GSEMINARIO'||cuenta.usuario=='ADMINISTRADOR'">
                         <i class="far fa-save"></i> Asignar
                     </v-btn>
                 </v-col>
@@ -45,8 +45,10 @@
                         :items="recepcion.detalles"
                         @toggle-select-all="selectAllToggle"
                         >
-                        <template v-slot:item.data-table-select="{ item, isSelected, select }">
+                        <template 
+                            v-slot:item.data-table-select="{ item, isSelected, select }">
                             <v-simple-checkbox
+                                v-if="cuenta.usuario=='GSEMINARIO'||cuenta.usuario=='ADMINISTRADOR'"
                                 :value="isSelected"
                                 :disabled="item.con_ccosto=='Si'"
                                 :readonly="item.con_ccosto=='Si'"
