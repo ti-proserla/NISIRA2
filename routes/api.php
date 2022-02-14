@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::group(['middleware' => ['cors']], function () {
+    Route::get('SeguimientoDocumentario/status','SeguimientoDocumentarioController@status');
     Route::resource('cuenta_trabajador', 'CuentaTrabajadorController');
     Route::post('bp/boletas','BoletasPagoController@index');
     Route::get('bp/boletas/show','BoletasPagoController@show');
@@ -50,7 +51,4 @@ Route::get('rutas','CuentaController@rutas');
 Route::resource('cliente-proveedor','ClienteProveedorController');
 
 Route::get('SeguimientoDocumentario','SeguimientoDocumentarioController@index');
-Route::group(['middleware' => ['cors']], function () {
-    Route::get('SeguimientoDocumentario/status','SeguimientoDocumentarioController@status');
-});
 Route::get('SeguimientoDocumentario/Recepcion','SeguimientoDocumentarioController@recepcion');
