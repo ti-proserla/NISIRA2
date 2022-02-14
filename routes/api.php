@@ -50,5 +50,7 @@ Route::get('rutas','CuentaController@rutas');
 Route::resource('cliente-proveedor','ClienteProveedorController');
 
 Route::get('SeguimientoDocumentario','SeguimientoDocumentarioController@index');
-Route::get('SeguimientoDocumentario/status','SeguimientoDocumentarioController@status');
+Route::group(['middleware' => ['cors']], function () {
+    Route::get('SeguimientoDocumentario/status','SeguimientoDocumentarioController@status');
+});
 Route::get('SeguimientoDocumentario/Recepcion','SeguimientoDocumentarioController@recepcion');
