@@ -192,4 +192,90 @@ class SeguimientoDocumentarioController extends Controller
         }
         return response()->json($documento);
     }
+
+    public function status(Request $request){
+        // dd("hola");
+        $query=
+        "SELECT	RD.FECHA fecha_recepcion,
+                DRD.idrecepcion,
+                MO.descripcion moneda,
+                DRD.item,
+                DRD.idclieprov,
+                DRD.razon_social,
+                DRD.iddocumento,
+                CONCAT(DRD.iddocumento,' ',DRD.serie,'-',DRD.numero) documento,
+                MAX(DRD.importe) importe,
+                FORMAT(MAX(T1.fechacreacion), 'dd/MM/yyyy HH:mm') fecha_provision,
+                CASE 
+                    WHEN LI.iddocumento IS NOT NULL
+                        THEN CONCAT(MAX(LI.iddocumento),' ',MAX(LI.serie),'-',MAX(LI.numero))
+                    WHEN MAX(M.idmovctacte) IS NOT NULL
+                        THEN 'PAGADO'
+                
+                ELSE ''
+                END AS tesoreria,
+                CASE 
+                    WHEN LI.iddocumento IS NOT NULL
+                    THEN MAX(DRD.importe)
+                    ELSE SUM(M.importe)
+                END
+                
+                importe_cta,
+                MAX(M.fecharegistro) fecha_pago
+                
+        FROM RECEPCION_DOCUMENTOS RD
+        INNER JOIN drecepcion_documentos DRD ON  RD.IDRECEPCION=DRD.IDRECEPCION
+        INNER JOIN MONEDAS MO ON MO.idmoneda=DRD.idmoneda
+        LEFT JOIN COBRARPAGARDOC T1  
+            ON T1.numero=DRD.NUMERO AND T1.serie=DRD.SERIE AND DRD.IDCLIEPROV=T1.idclieprov AND T1.ORIGEN = 'P' 
+        -- LEFT JOIN DINGRESOEGRESOCABA DIE ON DIE.IDREFERENCIA=T1.idcobrarpagardoc
+        -- LEFT JOIN INGRESOEGRESOCABA IE ON IE.IDINGRESOEGRESOCABA=DIE.IDINGRESOEGRESOCABA
+        LEFT JOIN 
+        (	SELECT IDDOCUMENTO 
+            FROM CFG_FORM_DOCUMENTO 
+            WHERE IDEMPRESA='001' AND CFORM='lst_provision'
+        ) TL 
+            ON TL.IDDOCUMENTO = T1.IDDOCUMENTO
+
+        LEFT JOIN MOVCTACTE M ON M.IDEMPRESA=T1.IDEMPRESA AND M.IDREFERENCIA=T1.IDCOBRARPAGARDOC and M.factor=-1 AND M.TABLA<>'AJUSTE'
+        LEFT JOIN DLIQUIDACIONGASTO DL ON DL.iddocumento=DRD.iddocumento AND DL.idclieprov=DRD.IDCLIEPROV AND DL.numero=DRD.NUMERO 
+        LEFT JOIN COBRARPAGARDOC LI ON LI.idcobrarpagardoc=DL.idcobrarpagardoc 
+        WHERE DRD.IDCLIEPROV = ?
+        AND DRD.serie = ?
+        AND DRD.numero = ?
+        GROUP BY RD.FECHA,DRD.FECHA, 
+                DRD.idrecepcion, 
+                DRD.item,
+                DRD.idclieprov,
+                DRD.razon_social,
+                DRD.iddocumento,
+                DRD.iddocumento,
+                DRD.serie,
+                DRD.numero,
+                LI.iddocumento,
+                LI.numero,
+                LI.fechacreacion,
+                MO.descripcion
+        ORDER BY RD.FECHA DESC";
+
+
+        $empresa=$request->empresa;
+        $sql_base="";
+        switch ($empresa) {
+            case '01':
+                $sql_base="sqlsrv_proserla";
+                break;
+            case '02':
+                $sql_base="sqlsrv_jayanca";
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+        $documentos=DB::connection($sql_base)
+                        ->select(DB::raw($query),[$request->ruc,$request->serie,(int)$request->numero]);
+
+        return response()->json($documentos[0]);
+    }
 }
