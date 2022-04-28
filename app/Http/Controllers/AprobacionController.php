@@ -21,7 +21,9 @@ class AprobacionController extends Controller
 
     public function pendientes(Request $request){
         $tabla=$request->tabla;
-        
+        /**
+         * Busca si es IDCLIENTEPROV o ID RESPONSABLE
+         */
         $existe_clienpro=DB::connection('sqlsrv')
                             ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
                                 $tabla,'IDCLIEPROV'
@@ -30,6 +32,7 @@ class AprobacionController extends Controller
                             ->select(DB::raw("SELECT COUNT(COLUMN_NAME) cantidad FROM Information_Schema.Columns WHERE TABLE_NAME=? AND COLUMN_NAME=?"),[
                                 $tabla,'IDRESPONSABLE'
                             ]);
+        //estado anterior                    
         $estado=DB::connection('sqlsrv')
                             ->select(DB::raw("SELECT TOP 1 idestado 
                             from SECUENCIA_FLUJO 
@@ -38,13 +41,19 @@ class AprobacionController extends Controller
                                     AND FORMULARIO_ORIGEN = FORMULARIO_DESTINO 
                                     AND IDESTADO <> 'AP'
                             order by SECUENCIA desc"),[$tabla]);
-        // dd("hola");
-        if ($existe_clienpro[0]->cantidad&&$tabla!="REQINTERNO") {
+        if ($tabla=='PEDIDO') {
+            $pendientes=DB::connection('sqlsrv')
+                            ->select(DB::raw("  SELECT T.*, isnull( C.NOMBRE, 'No Asignado') AS destinatariodoc 
+                                                FROM $tabla  AS T 
+                                                left JOIN RESPONSABLE AS C ON T.idresponsable = c.IDRESPONSABLE
+                                                WHERE T.idestado = ?"),[$estado[0]->idestado]);
+        }elseif ($existe_clienpro[0]->cantidad&&$tabla!="REQINTERNO") {
             $pendientes=DB::connection('sqlsrv')
                             ->select(DB::raw("  SELECT T.*, isnull( C.RAZON_SOCIAL, 'No Asignado') AS destinatariodoc 
                                                 FROM $tabla  AS T 
                                                 left JOIN CLIEPROV AS C ON T.idclieprov = C.IDCLIEPROV
                                                 WHERE T.idestado = ?"),[$estado[0]->idestado]);
+            // dd("hola");
         }elseif ($existe_idresponsable[0]->cantidad) {
             if ($tabla=="REQINTERNO") {
                 $pendientes=DB::connection('sqlsrv')
